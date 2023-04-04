@@ -1,8 +1,8 @@
-# TERMINAL Project
+# CIS4930 Project
 Group project for CIS4930 Internet Computing  
 
 ## Project Description
-TERMINAL is a web-based game where...  
+Terminal Illness is a web-based game where...  
 
 ## Project Structure
 
