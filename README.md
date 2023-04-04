@@ -7,7 +7,7 @@ Terminal Illness is a web-based game where...
 ## Project Structure
 
 ### Modules
-All JavaScript objects/abstractions should be placed in separate modules to minimize internal JavaScript.  
+All JavaScript objects/abstractions should be placed in separate modules to minimize internal JavaScript. Internal JavaScript should be strictly reserved for game initialization.  
 
 ### Resources
 Resources (i.e. files to be read from during game execution) are stored in the resources folder. The ResourceManager object (which currently behaves more like a namespace for its function) can read from these files and output the text as necessary.  
