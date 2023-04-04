@@ -1,0 +1,16 @@
+For more information on a specific command, type HELP command-name
+CD             Displays the name of or changes the current directory.
+CHDIR          Displays the name of or changes the current directory.
+CLS            Clears the screen.
+COLOR          Sets the default console foreground and background colors.
+DEL            Deletes one or more files.
+DIR            Displays a list of files and subdirectories in a directory.
+ECHO           Displays messages, or turns command echoing on or off.
+EXIT           Quits the CMD.EXE program (command interpreter).
+HELP           Provides Help information for Windows commands.
+TITLE          Sets the window title for a CMD.EXE session.
+TREE           Graphically displays the directory structure of a drive or
+               path.
+TYPE           Displays the contents of a text file.
+
+For more information on tools see the command-line reference in the online help.

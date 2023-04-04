@@ -1,0 +1,89 @@
+{
+    "drives": {
+        "C:": {
+            "Program Files": {
+
+            },
+
+            "Program Files (x86)": {
+
+            },
+
+            "ProgramData": {
+
+            },
+
+            "Users": {
+                "defaultuser0": {
+                    "AppData": {
+                        "Local": {
+
+                        },
+            
+                        "LocalLow": {
+            
+                        },
+            
+                        "Roaming": {
+            
+                        }
+                    },
+
+                    "Desktop": {
+
+                    }, 
+
+                    "Documents": {
+
+                    },
+
+                    "Downloads": {
+
+                    },
+
+                    "Favorites": {
+
+                    },
+
+                    "Links": {
+
+                    },
+
+                    "Music": {
+
+                    },
+
+                    "Pictures": {
+
+                    },
+
+                    "Saved Games": {
+
+                    },
+
+                    "Videos": {
+
+                    }
+                },
+
+                "username": {
+
+                },
+
+                "Public": {
+
+                }
+            },
+
+            "Windows": {
+
+            }
+
+            
+        },
+
+        "D:": {
+
+        }
+    }
+}

@@ -1,0 +1,40 @@
+////////////////////////////////////////////////////////////////
+//  MEMBER ATTRIBUTES
+////////////////////////////////////////////////////////////////
+// Properties
+#size;
+#position;
+#title;
+#icon;
+#type;
+
+#draggable;
+#minimized;
+#fullscreen;
+#hidden;
+
+// HTML Elements
+#eParent;
+#eWindow;
+#eTitleBar;
+#eMinimize;
+#eMaximize;
+#eClose;
+#eContent;
+
+constructor(parent, type = "", position = new Vec2(0, 0), size = new Vec2(512, 256), title = "Default Window")
+{
+    this.#eParent = parent;
+    this.#position = position;
+    this.#size = size;
+    
+    this.#title = title;
+    this.#draggable = false;
+    this.#minimized = false;
+    this.#fullscreen = false;
+    this.#hidden = false;
+
+    this.#initializeBase();
+}
+
+
