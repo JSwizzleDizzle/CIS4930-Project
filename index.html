@@ -42,7 +42,7 @@
         import Terminal from "./modules/Terminal.mjs";
         import Desktop from "./modules/Desktop.mjs";
         import NameTree from "./modules/NameTree.mjs";
-        import FileData from "./modules/FileSystem.mjs";
+        import {FileSystem, FileData} from "./modules/FileSystem.mjs";
 
         // Tree testing
         
@@ -60,13 +60,15 @@
         testTree.addChildAbsolute("System32", new FileData("System32"), ["Windows"]);
         testTree.printLevels();
         testTree.moveTo(["Photos"]);
+        testTree.moveToAbsolute();
         console.log(testTree.getCurrentPath().join('\\') + '>');
+        var testSystem = new FileSystem(testTree);
 
         // Webpage setup
         const desktop = document.getElementById("desktop");
         const game = new Desktop(desktop);
 
-        const terminal = new Terminal(desktop, 0, testTree);
+        const terminal = new Terminal(desktop, 0, testSystem);
         const testWindow = new BaseWindow(desktop, 0);
 
         game.registerWindow(terminal.getBaseWindow());

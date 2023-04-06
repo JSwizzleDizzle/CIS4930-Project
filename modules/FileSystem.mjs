@@ -5,7 +5,7 @@ import NameTree from "./NameTree.mjs";
 * Stores data held universally across filesystem nodes (drives, folders, files)
 * Extended by the below types of filesystem nodes
 */
-class FileData
+export class FileData
 {
     #name;
     #size;
@@ -100,14 +100,21 @@ class Directory extends FileData
 * 
 * 
 */
-class FileSystem
+export class FileSystem
 {
     #fileTree;
 
-    constructor()
+    constructor(tree = null)
     {
-        let root = new Directory("C:")
-        this.#fileTree = new NameTree(root, "C:");
+        if (tree === null) 
+        {
+            let root = new Directory("C:")
+            this.#fileTree = new NameTree(root, "C:");
+        }
+        else
+        {
+            this.#fileTree = tree;
+        }
     }
 
     // ACCESSORS
@@ -117,4 +124,6 @@ class FileSystem
     }
 }
 
-export default FileSystem; 
+
+
+// export default FileSystem;

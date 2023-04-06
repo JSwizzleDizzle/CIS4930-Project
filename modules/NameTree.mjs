@@ -175,7 +175,7 @@ class NameTree
         }
     }
 
-    moveToAbsolute(path)
+    moveToAbsolute(path = [])
     {
         this.#nodePtr = this.#root;
         this.moveTo(path);

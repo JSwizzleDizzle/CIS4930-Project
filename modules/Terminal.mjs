@@ -2,7 +2,7 @@
 import Vec2 from "./Vec2.mjs";
 import ResourceManager from "./ResourceManager.mjs";
 import BaseWindow from "./BaseWindow.mjs";
-import FileSystem from "./FileSystem.mjs";
+import {FileSystem, FileData} from "./FileSystem.mjs";
 
 
 
@@ -174,7 +174,7 @@ class Terminal
     cmdChangeDir(args)
     {
         this.printLine();
-        this.#fileSystem.fileTree.moveTo(args);
+        this.#fileSystem.getFileTree().moveTo(args);
         this.#directory = args;
         this.awaitCommand();
     }
@@ -205,10 +205,11 @@ class Terminal
     cmdDirectory(args)
     {
         this.printLine();
-        for (i in this.#fileSystem.getFileTree().getNode().children)
+        for (let [key, value] of this.#fileSystem.getFileTree().getNode().children)
         {
-            this.printLine(i.name);
+            this.printLine(value.name);
         }
+        this.printLine();
         this.awaitCommand();
     }
     
