@@ -82,7 +82,7 @@ class NameTree
     // Retrieve node data
     getData(path = [])
     {
-        return this.#getNode(path).data;
+        return this.getNode(path).data;
     }
 
     getDataAbsolute(path = [])
@@ -115,7 +115,7 @@ class NameTree
     // Adding children
     addChild(name, data, path = [])
     {
-        const parentNode = this.#getNode(path);
+        const parentNode = this.getNode(path);
         parentNode.children.set(name, new Node(name, data, parentNode));
     }
 
@@ -145,7 +145,7 @@ class NameTree
     // Removing children
     removeChild(name, path = [])
     {
-        const parentNode = this.#getNode(path);
+        const parentNode = this.getNode(path);
         return parentNode.children.delete(name);
     }
 
@@ -158,7 +158,7 @@ class NameTree
     // Editing child data
     setData(data, path = [])
     {
-        this.#getNode(path).data = data;
+        this.getNode(path).data = data;
     }
 
     setDataAbsolute(data, path = [])
@@ -185,8 +185,8 @@ class NameTree
     // SUS ALERT: Not yet tested, may just delete the node altogether
     transferNode(path, newPath)   
     {
-        const currentNode = this.#getNode(path);
-        const newParent = this.#getNode(newPath);
+        const currentNode = this.getNode(path);
+        const newParent = this.getNode(newPath);
 
         newParent.children.set(currentNode.name, currentNode);
         currentNode.parent.children.delete(currentNode.name);

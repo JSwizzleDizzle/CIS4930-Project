@@ -56,10 +56,10 @@ class Terminal
         ["title", "cmdTitle"], 
         ["tree", "cmdTree"], 
         ["terminal.exe", "cmdTerminalExe"],
-        ["ls", "cmdList"]
+        ["ls", "cmdDirectory"]
     ]);
 
-    constructor(parent, id, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512), directory = `C:\\>`)
+    constructor(parent, id, filesys = new FileSystem(), directory = `C:\\>`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
     {
         this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
 
@@ -70,7 +70,7 @@ class Terminal
         this.#entryPtr = 0;
         this.#awaitingCommand = false;
         this.#running = false;
-        this.#fileSystem = new FileSystem();
+        this.#fileSystem = filesys;
 
         this.#initialize();
     }
@@ -205,6 +205,10 @@ class Terminal
     cmdDirectory(args)
     {
         this.printLine();
+        for (i in this.#fileSystem.getFileTree().getNode().children)
+        {
+            this.printLine(i.name);
+        }
         this.awaitCommand();
     }
     
@@ -254,14 +258,6 @@ class Terminal
         this.printFile("resources/intro.txt");
         this.enableInput();
         this.#awaitingCommand = false;
-    }
-
-    cmdList()
-    {
-        for (i in this.#fileSystem.getFileTree().getNode().children)
-        {
-            this.printLine(i.name);
-        }
     }
 
     #cmdError()

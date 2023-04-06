@@ -84,7 +84,7 @@ class Directory extends FileData
 
     constructor(name)
     {
-        super(name, Date.now(), !this.#isDrive);
+        super(name, Date.now());
         this.#isDrive = Directory.driveRegex.test(this.getName());
         this.files = new Map();
     }
@@ -106,17 +106,15 @@ class FileSystem
 
     constructor()
     {
-        root = new Directory("C:")
+        let root = new Directory("C:")
         this.#fileTree = new NameTree(root, "C:");
     }
 
+    // ACCESSORS
     getFileTree()
     {
         return this.#fileTree;
     }
-    
 }
-
-
 
 export default FileSystem; 
