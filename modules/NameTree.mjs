@@ -62,7 +62,7 @@ class NameTree
     }
 
     // Specific case of navigate: from nodePtr
-    #getNode(path = [])
+    getNode(path = [])
     {
         return this.#navigateFrom(this.#nodePtr, path);
     }

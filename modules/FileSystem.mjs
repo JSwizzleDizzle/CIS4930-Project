@@ -110,7 +110,10 @@ class FileSystem
         this.#fileTree = new NameTree(root, "C:");
     }
 
-
+    getFileTree()
+    {
+        return this.#fileTree;
+    }
     
 }
 

@@ -258,7 +258,7 @@ class Terminal
 
     cmdList()
     {
-        for (i in this.#fileSystem.fileTree.nodePtr.children)
+        for (i in this.#fileSystem.getFileTree().getNode().children)
         {
             this.printLine(i.name);
         }
