@@ -2,6 +2,7 @@
 import Vec2 from "./Vec2.mjs";
 import ResourceManager from "./ResourceManager.mjs";
 import BaseWindow from "./BaseWindow.mjs";
+import FileSystem from "./FileSystem.mjs";
 
 
 
@@ -54,10 +55,11 @@ class Terminal
         ["help", "cmdHelp"], 
         ["title", "cmdTitle"], 
         ["tree", "cmdTree"], 
-        ["terminal.exe", "cmdTerminalExe"]
+        ["terminal.exe", "cmdTerminalExe"],
+        ["ls", "cmdList"]
     ]);
 
-    constructor(parent, id, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512), directory = `C:\\Users\\username>`)
+    constructor(parent, id, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512), directory = `C:\\>`)
     {
         this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
 
@@ -68,6 +70,7 @@ class Terminal
         this.#entryPtr = 0;
         this.#awaitingCommand = false;
         this.#running = false;
+        this.#fileSystem = new FileSystem();
 
         this.#initialize();
     }
@@ -171,6 +174,8 @@ class Terminal
     cmdChangeDir(args)
     {
         this.printLine();
+        this.#fileSystem.fileTree.moveTo(args);
+        this.#directory = args;
         this.awaitCommand();
     }
     
@@ -193,6 +198,7 @@ class Terminal
     cmdDelete(args)
     {
         this.printLine();
+        this.#fileSystem.fileTree.removeChild(args, this.#directory);
         this.awaitCommand();
     }
 
@@ -248,6 +254,14 @@ class Terminal
         this.printFile("resources/intro.txt");
         this.enableInput();
         this.#awaitingCommand = false;
+    }
+
+    cmdList()
+    {
+        for (i in this.#fileSystem.fileTree.nodePtr.children)
+        {
+            this.printLine(i.name);
+        }
     }
 
     #cmdError()

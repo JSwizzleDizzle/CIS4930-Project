@@ -106,7 +106,8 @@ class FileSystem
 
     constructor()
     {
-        this.#fileTree = new NameTree();
+        root = new Directory("C:")
+        this.#fileTree = new NameTree(root, "C:");
     }
 
 
