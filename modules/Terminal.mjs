@@ -291,7 +291,7 @@ class Terminal
     {
         if(this.#awaitingCommand)
         {
-            const itemized = command.split(' ');
+            const itemized = command.split(' ', 2);
             if(itemized.length === 0)
             {
                 this.awaitCommand();
