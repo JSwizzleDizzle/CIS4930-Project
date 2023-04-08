@@ -27,7 +27,6 @@ class Terminal
     #awaitingCommand;
     #running;
     #numLines;
-    #directoryStack;
 
     // HTML Elements
     #eWindow;
@@ -60,7 +59,7 @@ class Terminal
         ["ls", "cmdDirectory"]
     ]);
 
-    constructor(parent, id, filesys = new FileSystem(), directory = `C:\\`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
+    constructor(parent, id, filesys = new FileSystem(), directory = `C:\\>`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
     {
         this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
 
@@ -72,8 +71,6 @@ class Terminal
         this.#awaitingCommand = false;
         this.#running = false;
         this.#fileSystem = filesys;
-        this.#directoryStack = []
-        this.#directoryStack.push(directory);
 
         this.#initialize();
     }
@@ -181,7 +178,6 @@ class Terminal
         if (this.#fileSystem.getFileTree())
         this.printLine();
         this.#fileSystem.getFileTree().moveTo(args);
-        this.#directoryStack.push(args);
         this.#directory = args;
         this.awaitCommand();
     }
@@ -395,7 +391,7 @@ class Terminal
     awaitCommand()
     {
         this.#awaitingCommand = true;
-        let directoryPath = this.#directoryStack.join('\\');
+        let directoryPath = this.#fileSystem.getFileTree().getCurrentPath().join('\\');
         directoryPath += '>';
         this.printLine(directoryPath);
         this.enableInput();
