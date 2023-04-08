@@ -174,11 +174,9 @@ class Terminal
     ////////////////////////////////////////////////////////////////
 
     cmdChangeDir(args)
-    {
-        if (this.#fileSystem.getFileTree())
+    {   
         this.printLine();
-        this.#fileSystem.getFileTree().moveTo(args);
-        this.#directory = args;
+        this.#fileSystem.getFileTree().moveTo(args) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
         this.awaitCommand();
     }
     

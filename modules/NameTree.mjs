@@ -104,7 +104,11 @@ class NameTree
         return path.reverse();
     }
 
-
+    getParent()
+    {
+        this.#nodePtr = this.#nodePtr.parent;
+        return this.#nodePtr.parent;
+    }
 
     ////////////////////////////////////////////////////////////////
     //  MUTATORS:
@@ -169,10 +173,12 @@ class NameTree
     // Navigate by changing the nodePtr
     moveTo(path)
     {
+        let isValidNode = this.#nodePtr;
         for(const name of path)
         {
-            this.#nodePtr = name === ".." ? this.#nodePtr.parent : this.#nodePtr.children.get(name);
+            isValidNode = name === ".." ? this.#nodePtr.parent : this.#nodePtr.children.get(name);
         }
+        return typeof isValidNode === 'undefined' ? false : this.#nodePtr = isValidNode;
     }
 
     moveToAbsolute(path = [])
