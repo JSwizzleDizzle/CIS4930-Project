@@ -57,8 +57,7 @@ class Terminal
         ["title", "cmdTitle"], 
         ["tree", "cmdTree"], 
         ["terminal.exe", "cmdTerminalExe"],
-        ["ls", "cmdDirectory"],
-        ["battle", "printCharacters"]
+        ["ls", "cmdDirectory"]
     ]);
 
     constructor(parent, id, filesys = new FileSystem(), directory = `C:\\`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
