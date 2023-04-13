@@ -176,7 +176,7 @@ class Terminal
     cmdChangeDir(args)
     {   
         this.printLine();
-        this.#fileSystem.getFileTree().moveTo(args) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
+        this.#fileSystem.getFileTree().moveTo([args]) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
         this.awaitCommand();
     }
     
@@ -366,15 +366,15 @@ class Terminal
     {
         if(this.#awaitingCommand)
         {
-            const itemized = command.split(' ', 2);
+            const itemized = command.split(' ');
             if(itemized.length === 0)
             {
                 this.awaitCommand();
             }
             else
             {
-                const cmd = itemized[0];
-                const args = itemized.slice(1);
+                const cmd = itemized.shift();
+                const args = itemized.join(' ');
 
                 Terminal.commands.has(cmd) ? this[Terminal.commands.get(cmd)](args) : this.#cmdError();
             }
