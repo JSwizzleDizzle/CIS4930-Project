@@ -104,6 +104,7 @@ class Terminal
 
         // The text editor area
         this.#eTextbox = document.createElement("section");
+        this.#eTextbox.setAttribute("class", "terminal-text");
 
         // Bottom spacer block
         this.#eBlock = document.createElement("div");
@@ -111,6 +112,7 @@ class Terminal
         
         // The window content section
         this.#eTerminal = this.#baseWindow.getWindowElements().eContent;
+        this.#eTerminal.style.backgroundColor = "rgb(12, 12, 12)";
         this.#eTerminal.appendChild(this.#eTextbox);
         this.#eTerminal.appendChild(this.#eBlock);
 
@@ -172,10 +174,9 @@ class Terminal
     ////////////////////////////////////////////////////////////////
 
     cmdChangeDir(args)
-    {
+    {   
         this.printLine();
-        this.#fileSystem.getFileTree().moveTo(args);
-        this.#directory = args;
+        this.#fileSystem.getFileTree().moveTo(args) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
         this.awaitCommand();
     }
     
@@ -190,11 +191,76 @@ class Terminal
     }
 
     cmdColor(args)
-    {
-        this.printLine();
+    {   
+        let background = args.toString().charAt(0).toLowerCase();
+        let foreground = args.toString().charAt(1).toLowerCase();
+        let currBackground = this.#eTerminal.style.backgroundColor;
+
+        let colors = new Map([
+            ["0", "rgb(12, 12, 12)"],    // black
+            ["1", "rgb(0, 0, 255)"],     // blue
+            ["2", "rgb(0, 255, 0)"],     // green
+            ["3", "rgb(0, 255, 255)"],   // aqua
+            ["4", "rgb(255, 0, 0)"],     // red
+            ["5", "rgb(160, 32, 240)"],  // purple
+            ["6", "rgb(255, 255, 0)"],   // yellow
+            ["7", "rgb(208, 208, 208)"], // white
+            ["8", "rgb(128, 128, 128)"], // grey
+            ["9", "rgb(173, 216, 230)"], // light blue
+            ["a", "rgb(144, 238, 144)"], // light green
+            ["b", "rgb(48, 213, 200)"],  // light aqua
+            ["c", "rgb(255, 204, 203)"], // light red
+            ["d", "rgb(203, 195, 227)"], // light purple
+            ["e", "rgb(255, 250, 160)"], // light yellow
+            ["f", "rgb(255, 255, 255)"]  // bright white
+        ]);
+
+
+        if ((foreground != "" && foreground == background) ||
+           (args.toString().length == 1 && colors.get(background) == currBackground))
+        {   // edge case: (foreground : background) are the same
+            this.printFile("resources/cmd-color-error.txt");
+            this.awaitCommand();
+            return;
+        }
+        
+        switch(args.toString().length)
+        {
+
+            case 0:
+                // default theme (white : black)
+                this.#eTextbox.style.color = colors.get("7");
+                this.#eTerminal.style.backgroundColor = colors.get("0");
+                break;
+
+            case 1: 
+                // sets foreground color only
+                foreground = background;
+                colors.has(foreground) ? this.#eTextbox.style.color = colors.get(foreground) : this.printFile("resources/cmd-color-error.txt");
+                break;
+                
+            case 2: 
+                // sets foreground and background
+                if (colors.has(foreground) && colors.has(background))
+                {
+                    this.#eTextbox.style.color = colors.get(foreground);
+                    this.#eTerminal.style.backgroundColor = colors.get(background);
+                } 
+                else 
+                { 
+                    this.printFile("resources/cmd-color-error.txt"); 
+                }
+                break;
+                
+            default: 
+                //invalid input
+                this.printFile("resources/cmd-color-error.txt");
+
+        }
+
         this.awaitCommand();
     }
-    
+
     cmdDelete(args)
     {
         this.printLine();
@@ -215,7 +281,7 @@ class Terminal
     
     cmdEcho(args)
     {
-        this.printLine();
+        this.printLine(args);
         this.awaitCommand();
     }
     
@@ -271,6 +337,15 @@ class Terminal
 
 
     ////////////////////////////////////////////////////////////////
+    //  COMBAT COMMANDS
+    ////////////////////////////////////////////////////////////////
+    printCharacters(enemy) 
+    {
+        this.printFile(enemy);
+        this.printFile("images/ascii-images/bacteriophage.txt");
+    }
+
+    ////////////////////////////////////////////////////////////////
     //  BEHAVIORS
     ////////////////////////////////////////////////////////////////
     // Command handling methods
@@ -314,7 +389,9 @@ class Terminal
     awaitCommand()
     {
         this.#awaitingCommand = true;
-        this.printLine(this.#directory);
+        let directoryPath = this.#fileSystem.getFileTree().getCurrentPath().join('\\');
+        directoryPath += '>';
+        this.printLine(directoryPath);
         this.enableInput();
     }
 
