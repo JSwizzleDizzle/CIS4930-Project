@@ -173,12 +173,20 @@ class NameTree
     // Navigate by changing the nodePtr
     moveTo(path)
     {
-        let isValidNode = this.#nodePtr;
+        var isValidNode = this.#nodePtr;
         for(const name of path)
         {
             isValidNode = name === ".." ? this.#nodePtr.parent : this.#nodePtr.children.get(name);
         }
-        return typeof isValidNode === 'undefined' ? false : this.#nodePtr = isValidNode;
+        if (isValidNode === null) 
+        {
+            return false;
+        } 
+        else 
+        {
+            this.#nodePtr = isValidNode;
+            return true;
+        }
     }
 
     moveToAbsolute(path = [])
