@@ -173,7 +173,7 @@ class NameTree
         {
             this.#nodePtr = name === ".." ? this.#nodePtr.parent : this.#nodePtr.children.get(name);
         }
-    }
+    }   
 
     moveToAbsolute(path = [])
     {
