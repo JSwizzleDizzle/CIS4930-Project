@@ -178,15 +178,12 @@ class NameTree
         {
             isValidNode = name === ".." ? this.#nodePtr.parent : this.#nodePtr.children.get(name);
         }
-        if (isValidNode === null) 
+        if (isValidNode === null || isValidNode === undefined)  
         {
             return false;
         } 
-        else 
-        {
-            this.#nodePtr = isValidNode;
-            return true;
-        }
+        this.#nodePtr = isValidNode;
+        return true;
     }
 
     moveToAbsolute(path = [])
