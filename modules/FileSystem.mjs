@@ -15,7 +15,7 @@ export class FileData
     #modified;
     #accessed;
 
-    constructor(name, date = Date.now(), deletable = true)
+    constructor(name, deletable = true, date = Date.now())
     {
         this.#name = name;
         this.#size = 0;

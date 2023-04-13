@@ -102,11 +102,11 @@ main {
     overflow-y: scroll;
 }
 
-.terminal p, pre {
+.terminal .terminal-text {
     min-height: 14px;
     margin: 0px;
     padding: 0;
-    color: rgb(208,208,208);
+    color: rgb(208, 208, 208);
 }
 
 .spacer {
