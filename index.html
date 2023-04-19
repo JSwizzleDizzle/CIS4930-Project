@@ -42,22 +42,26 @@
         import Terminal from "./modules/Terminal.mjs";
         import Desktop from "./modules/Desktop.mjs";
         import NameTree from "./modules/NameTree.mjs";
-        import {FileSystem, FileData} from "./modules/FileSystem.mjs";
+        import {FileSystem, Directory, TextFile} from "./modules/FileSystem.mjs";
 
         // Tree testing
         
-        const testTree = new NameTree(new FileData("C:"), "C:");
-        testTree.addChild("Program Files", new FileData("Program Files"));
-        testTree.addChild("Users", new FileData("Users"));
-        testTree.addChild("Windows", new FileData("Windows"));
-        
-        testTree.addChild("defaultuser0", new FileData("defaultuser0"), ["Users"]);
-        testTree.addChild("Mike Oxmall", new FileData("Mike Oxmall"), ["Users"]);
+        const testTree = new NameTree(new Directory("C:"), "C:");
+        testTree.addChild("Program Files", new Directory("Program Files"));
+        testTree.addChild("Users", new Directory("Users"));
+        testTree.addChild("Windows", new Directory("Windows"));
+        testTree.addChild("testDelete.png", new TextFile("testDelete.png", "contains nothing"));
+
+        testTree.addChild("defaultuser0", new Directory("defaultuser0"), ["Users"]);
+        testTree.addChild("Mike Oxmall", new Directory("Mike Oxmall"), ["Users"]);
         testTree.moveTo(["Users"]);
-        testTree.addChild("Mike Oxbig", new FileData("Mike Oxbig"));
+        testTree.addChild("Mike Oxbig", new Directory("Mike Oxbig"));
         testTree.moveTo(["Mike Oxbig"]);
-        testTree.addChild("Photos", new FileData("Photos"));
-        testTree.addChildAbsolute("System32", new FileData("System32"), ["Windows"]);
+        testTree.addChild("Photos", new Directory("Photos"));
+        testTree.moveTo(["Photos"]);
+        testTree.addChild("lol", new TextFile("lol.png", "haha"));
+
+        testTree.addChildAbsolute("System32", new Directory("System32"), ["Windows"]);
         testTree.printLevels();
         testTree.moveTo(["Photos"]);
         testTree.moveToAbsolute();

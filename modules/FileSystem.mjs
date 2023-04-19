@@ -54,7 +54,7 @@ export class FileData
 * Stores basic file data
 * Type is the file extension, content is contained text
 */
-class TextFile extends FileData
+export class TextFile extends FileData
 {
     #type;
     #content;
@@ -75,7 +75,7 @@ class TextFile extends FileData
 * Can be a drive or a normal directory
 * Holds a map (#files) of names to TextFile objects
 */
-class Directory extends FileData
+export class Directory extends FileData
 {
     static driveRegex = /[A-Z]\:/;
 
@@ -85,6 +85,7 @@ class Directory extends FileData
     constructor(name)
     {
         super(name, Date.now());
+        this.setDeletable(false);
         this.#isDrive = Directory.driveRegex.test(this.getName());
         this.files = new Map();
     }

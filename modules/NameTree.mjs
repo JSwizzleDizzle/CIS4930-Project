@@ -50,7 +50,7 @@ class NameTree
     //  HELPER METHODS
     ////////////////////////////////////////////////////////////////
 
-    // Moves from one tree location to another via a name path
+    // Moves from one tree location to another via a name path, returns false if the path is not found
     #navigateFrom(currentNode, path)
     {
         let travelNode = currentNode;
@@ -58,7 +58,7 @@ class NameTree
         {
             travelNode = name === ".." ? travelNode.parent : travelNode.children.get(name);
         }
-        return travelNode;
+        return travelNode === undefined ? false : travelNode;
     }
 
     // Specific case of navigate: from nodePtr
@@ -147,6 +147,11 @@ class NameTree
     }
 
     // Removing children
+    removeChild(name)
+    {
+        const parentNode = this.#nodePtr;
+        return parentNode.children.delete(name);
+    }
     removeChild(name, path = [])
     {
         const parentNode = this.getNode(path);

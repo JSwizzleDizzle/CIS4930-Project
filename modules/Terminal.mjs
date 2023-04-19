@@ -264,7 +264,20 @@ class Terminal
     cmdDelete(args)
     {
         this.printLine();
-        this.#fileSystem.fileTree.removeChild(args, this.#directory);
+        if (!this.#fileSystem.getFileTree().getData([args]))
+        {
+            this.printLine("'" + args + "' does not exist");
+        }
+        else if (!this.#fileSystem.getFileTree().getData([args]).isDeletable())
+        {
+            this.printLine("'" + args + "' is not deletable");
+        }
+        else
+        {
+            this.#fileSystem.getFileTree().removeChild(args);
+            this.printLine("'" + args + "' was successfully deleted");
+        }
+        
         this.awaitCommand();
     }
 
