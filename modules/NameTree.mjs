@@ -183,7 +183,8 @@ class NameTree
         {
             isValidNode = name === ".." ? this.#nodePtr.parent : this.#nodePtr.children.get(name);
         }
-        if (isValidNode === null || isValidNode === undefined) return false;
+        //invalid nodes are null/undefined or files that can be deleted (e.g. Text files)
+        if (isValidNode === null || isValidNode === undefined || isValidNode.data.isDeletable()) return false;
         this.#nodePtr = isValidNode;
         return true;
     }
