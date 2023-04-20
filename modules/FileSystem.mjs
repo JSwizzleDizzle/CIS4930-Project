@@ -145,16 +145,19 @@ class FileFolder
 
 
     // ================ ACCESSORS ================ //
-    isDrive() { return this.#isDrive; }
+    getName() { return this.#metadata.getName(); }
+    getSize() { return this.#metadata.getSize(); }
     getMetadata() { return this.#metadata; }
-
+    isDrive() { return this.#isDrive; }
+    isEmpty() { return this.#files.size === 0; }
+    
     getFile(fileName)
     {
         return this.#files.has(fileName) ? this.#files.get(fileName) : null;
     }
 
 
-    
+
     // ================ MUTATORS ================ //
     addFile(file, overwrite = false)
     {
@@ -199,8 +202,8 @@ class FileFolder
 
 
 /*
-* FILESYSTEM: Manages file creation, deletion, and organization via directory tree
-* 
+* FILESYSTEM: Manages file creation, deletion, and organization via directory NameTree
+* Directory NameTree nodes are directories which hold FileFolders as data and other directories as children
 * 
 */
 class FileSystem
