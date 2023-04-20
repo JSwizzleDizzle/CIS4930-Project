@@ -5,7 +5,7 @@ import NameTree from "./NameTree.mjs";
 * Stores data held universally across filesystem nodes (drives, folders, files)
 * Extended by the below types of filesystem nodes
 */
-class FileData
+class FileMetadata
 {
     #name;
     #size;
@@ -15,7 +15,7 @@ class FileData
     #modified;
     #accessed;
 
-    constructor(name, date = Date.now(), deletable = true)
+    constructor(name, deletable = true, date = Date.now())
     {
         this.#name = name;
         this.#size = 0;
@@ -37,11 +37,25 @@ class FileData
     getDateAccessed() { return this.#accessed.toString(); }
 
     // ================ MUTATORS ================ //
-    setName(name) { this.#name = name; }
-    setSize(size) { this.#size = size; }
-    setDeletable(val) { this.#deletable = val; }
-    setDateModified(date) { this.#modified = date; }
-    setDateAccessed(date) { this.#accessed = date; }
+    setDateModified(date = Date.now()) { this.#modified = date; }
+    setDateAccessed(date = Date.now()) { this.#accessed = date; }
+    setDeletable(val)
+    {
+        this.setDateModified();
+        this.#deletable = val;
+    }
+    setSize(size)
+    {
+        this.setDateModified();
+        this.#size = size;
+    }
+    setName(name)
+    {
+        this.setDateModified();
+        this.#name = name;
+    }
+    
+
 
     // ================ BEHAVIORS ================ //
     toString() { return `${this.#name}, modified ${this.#modified}`; }
@@ -54,17 +68,41 @@ class FileData
 * Stores basic file data
 * Type is the file extension, content is contained text
 */
-class TextFile extends FileData
+class TextFile
 {
-    #type;
+    #metadata;
     #content;
+    #type;
 
     constructor(name, content, deletable = true, date = Date.now())
     {
-        super(name, date, deletable);
         this.#content = content;
+        this.#metadata = new FileMetadata(name, deletable, date);
+        this.#metadata.setSize(content.length);
+        this.#type = name.slice(name.lastIndexOf('.')).toLowerCase();
     }
 
+    // ================ ACCESSORS ================ //
+    
+    getType() { return this.#type; }
+    getMetadata() { return this.#metadata; }
+    getContent()
+    {
+        this.#metadata.setDateAccessed();
+        return this.#content;
+    }
+
+    // ================ MUTATORS ================ //
+    setContent(content)
+    {
+        this.#content = content;
+        this.#metadata.setSize(content.length);
+    }
+    setName(name)
+    {
+        this.#type = name.slice(name.lastIndexOf('.')).toLowerCase();
+        this.#metadata.setName(name);
+    }
 
 }
 
@@ -75,21 +113,23 @@ class TextFile extends FileData
 * Can be a drive or a normal directory
 * Holds a map (#files) of names to TextFile objects
 */
-class Directory extends FileData
+class Directory
 {
     static driveRegex = /[A-Z]\:/;
 
+    #metadata;
     #isDrive;
-    files;
+    #files;
 
     constructor(name)
     {
-        super(name, Date.now(), !this.#isDrive);
         this.#isDrive = Directory.driveRegex.test(this.getName());
-        this.files = new Map();
+        this.#metadata = new FileMetadata(name, !this.#isDrive, Date.now());
+        this.#files = new Map();
     }
 
     isDrive() { return this.#isDrive; }
+    getMetadata() { return this.#metadata; }
 
 }
 
