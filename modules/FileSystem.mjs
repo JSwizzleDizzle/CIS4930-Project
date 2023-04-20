@@ -49,6 +49,11 @@ class FileMetadata
         this.setDateModified();
         this.#size = size;
     }
+    incrementSize(addedSize)
+    {
+        this.setDateModified();
+        this.#size += addedSize;
+    }
     setName(name)
     {
         this.setDateModified();
@@ -82,8 +87,11 @@ class TextFile
         this.#type = name.slice(name.lastIndexOf('.')).toLowerCase();
     }
 
+
+
     // ================ ACCESSORS ================ //
-    
+    getName() { return this.#metadata.getName(); }
+    getSize() { return this.#metadata.getSize(); }
     getType() { return this.#type; }
     getMetadata() { return this.#metadata; }
     getContent()
@@ -96,12 +104,17 @@ class TextFile
     setContent(content)
     {
         this.#content = content;
-        this.#metadata.setSize(content.length);
+        this.#metadata.setSize(this.#content.length);
     }
     setName(name)
     {
         this.#type = name.slice(name.lastIndexOf('.')).toLowerCase();
         this.#metadata.setName(name);
+    }
+    appendContent(content)
+    {
+        this.#content.concat(content);
+        this.#metadata.setSize(this.#content.length);
     }
 
 }
@@ -113,7 +126,7 @@ class TextFile
 * Can be a drive or a normal directory
 * Holds a map (#files) of names to TextFile objects
 */
-class Directory
+class FileFolder
 {
     static driveRegex = /[A-Z]\:/;
 
@@ -121,16 +134,66 @@ class Directory
     #isDrive;
     #files;
 
-    constructor(name)
+    constructor(name, files = [])
     {
         this.#isDrive = Directory.driveRegex.test(this.getName());
         this.#metadata = new FileMetadata(name, !this.#isDrive, Date.now());
         this.#files = new Map();
+        this.addFiles(files);
     }
 
+
+
+    // ================ ACCESSORS ================ //
     isDrive() { return this.#isDrive; }
     getMetadata() { return this.#metadata; }
 
+    getFile(fileName)
+    {
+        return this.#files.has(fileName) ? this.#files.get(fileName) : null;
+    }
+
+
+    
+    // ================ MUTATORS ================ //
+    addFile(file, overwrite = false)
+    {
+        if(this.#files.has(file.getName()) && !overwrite)
+            return false;
+
+        this.#metadata.incrementSize(file.getSize());
+        this.#files.set(file.getName(), file);
+        return true;
+    }
+
+    addFiles(files, overwrite = false)
+    {
+        success = true;
+        for(const file of files)
+        {
+            success = success && this.addFile(file, overwrite);
+        }
+        return success;
+    }
+
+    removeFile(fileName)
+    {
+        if(!this.#files.has(fileName))
+            return false;
+
+        this.#metadata.incrementSize(-file.getSize());
+        this.#files.delete(file.getName());
+    }
+
+    removeFiles(fileNames)
+    {
+        success = true;
+        for(const fileName of fileNames)
+        {
+            success = success && this.removeFile(fileName);
+        }
+        return success;
+    }
 }
 
 
