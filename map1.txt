@@ -1,3 +1,4 @@
+d,C:
 d,Program Files,C:
 d,Adobe,C:,Program Files
 d,Adobe Acrobat,C:,Program Files,Adobe

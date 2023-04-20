@@ -143,7 +143,7 @@ export class FileSystem
 
         var file = s.split(/\r?\n/);
         var line = file[0].split(',');
-        var tree = new NameTree(line[1], line[1]);
+        var tree = new NameTree(new Directory(line[1]), line[1]);
         for (let i = 1; i < file.length; i++)
         {
             var line = file[i].split(',');
