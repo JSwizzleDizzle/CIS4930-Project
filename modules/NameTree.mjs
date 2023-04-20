@@ -229,8 +229,6 @@ class NameTree
             currentNodes = nodeBuffer;
             nodeBuffer = [];
         }
-
-        
     }
 
 }
