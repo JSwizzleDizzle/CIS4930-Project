@@ -123,6 +123,41 @@ export class FileSystem
     {
         return this.#fileTree;
     }
+
+    // MUTATORS
+    loadFromFile(s)
+    {
+        // var s = "";
+        // var fs = new XMLHttpRequest();
+        // fs.onload = function() {
+        //     s = fs.responseText;
+        // }
+        // fs.open("GET", filename, true);
+        // fs.send();
+
+        // const fs = require('fs');
+        // fs.readFile(filename, (err, data) => {
+        //     if (err) throw err;
+        //     s = data.toString();
+        // })
+
+        var file = s.split(/\r?\n/);
+        var line = file[0].split(',');
+        var tree = new NameTree(line[1], line[1]);
+        for (let i = 1; i < file.length; i++)
+        {
+            var line = file[i].split(',');
+                if (line[0] === 'd')
+                {
+                    tree.addChildAbsolute(line[1], new Directory(line[1]), line.slice(2));
+                }
+                else if (line[0] === 'f')
+                {
+                    tree.addChildAbsolute(line[1], new TextFile(line[1], line[2]), line.slice(3));
+                }
+        }
+        this.#fileTree = tree;
+    }
 }
 
 

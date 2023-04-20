@@ -1,0 +1,11 @@
+d,Program Files,C:
+d,Adobe,C:,Program Files
+d,Adobe Acrobat,C:,Program Files,Adobe
+d,Blender,C:,Program Files
+d,Google,C:,Program Files
+d,Internet Explorer,C:,Program Files
+d,Microsoft Office,C:,Program Files
+d,Windows Defender,C:,Program Files
+d,WindowsPowerShell,C:,Program Files
+d,Users,C:
+d,Windows,C:
