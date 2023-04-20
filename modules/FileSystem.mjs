@@ -209,7 +209,7 @@ class FileFolder
 /*
 * FILESYSTEM: Manages file creation, deletion, and organization via directory NameTree
 * Directory NameTree nodes are directories which hold FileFolders as data and other directories as children
-* 
+* The top directory is called "ROOT", which houses entire drives as its direct children
 */
 class FileSystem
 {
@@ -217,10 +217,39 @@ class FileSystem
 
     constructor()
     {
-        this.#fileTree = new NameTree();
+        this.#fileTree = new NameTree(new FileFolder("ROOT"));
     }
 
 
+
+    // ================ ACCESSORS ================ //
+    getFile() {}
+    getDirectory() {}
+
+
+    // ================ MUTATORS ================ //
+    setLocation() {}
+    setLocationAbsolute() {}
+
+    addDirectory() {}
+    addDirectories() {}
+    addFile() {}
+    addFiles() {}
+
+    deleteDirectory() {}
+    deleteDirectories() {}
+    deleteFile() {}
+    deleteFiles() {}
+
+    moveDirectory() {}
+    moveDirectories() {}
+    moveFile() {}
+    moveFiles() {}
+    
+    moveDirectoryAbsolute() {}
+    moveDirectoriesAbsolute() {}
+    moveFileAbsolute() {}
+    moveFilesAbsolute() {}
     
 }
 
