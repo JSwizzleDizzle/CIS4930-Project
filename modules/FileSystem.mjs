@@ -228,28 +228,30 @@ class FileSystem
 
 
     // ================ MUTATORS ================ //
-    setLocation() {}
-    setLocationAbsolute() {}
+    setLocation(path) {}
+    setLocationAbsolute(path) {}
 
     addDirectory() {}
     addDirectories() {}
     addFile() {}
     addFiles() {}
 
-    deleteDirectory() {}
-    deleteDirectories() {}
-    deleteFile() {}
-    deleteFiles() {}
+    deleteDirectory(dirName) {}
+    deleteDirectories(dirNames) {}
+    deleteFile(fileName) {}
+    deleteFiles(fileNames) {}
 
-    moveDirectory() {}
-    moveDirectories() {}
-    moveFile() {}
-    moveFiles() {}
+    moveDirectory(path) {}
+    moveDirectories(path) {}
+    moveFile(path) {}
+    moveFiles(path) {}
     
-    moveDirectoryAbsolute() {}
-    moveDirectoriesAbsolute() {}
-    moveFileAbsolute() {}
-    moveFilesAbsolute() {}
+    moveDirectoryAbsolute(path) {}
+    moveDirectoriesAbsolute(path) {}
+    moveFileAbsolute(path) {}
+    moveFilesAbsolute(path) {}
+
+    buildFromFile(file) {}
     
 }
 
