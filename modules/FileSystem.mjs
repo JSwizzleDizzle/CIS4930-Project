@@ -1,7 +1,7 @@
 import NameTree from "./NameTree.mjs";
 
 /*
-* FILEDATA:
+* FILEMETADATA:
 * Stores data held universally across filesystem nodes (drives, folders, files)
 * Extended by the below types of filesystem nodes
 */
@@ -122,7 +122,7 @@ class TextFile
 
 
 /*
-* DIRECTORY:
+* FILEFOLDER:
 * Can be a drive or a normal directory
 * Holds a map (#files) of names to TextFile objects
 */
@@ -153,7 +153,12 @@ class FileFolder
     
     getFile(fileName)
     {
-        return this.#files.has(fileName) ? this.#files.get(fileName) : null;
+        if(this.#files.has(fileName))
+        {
+            this.#metadata.setDateAccessed();
+            return this.#files.get(fileName);
+        }
+        return null;
     }
 
 
