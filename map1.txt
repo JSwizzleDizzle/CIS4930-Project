@@ -1,12 +1,24 @@
 d,C:
 d,Program Files
 d,Adobe,Program Files
-d,Adobe Acrobat,Program Files,Adobe
-d,Blender,Program Files
-d,Google,Program Files
+d,Acrobat DC,Program Files,Adobe
+d,Assets,Program Files,Adobe,Acrobat DC
+f,logo.png,adobe logo,Program Files,Adobe,Acrobat DC,Assets
+f,Acrobat.exe,acrobat,Program Files,Adobe,Acrobat DC
+f,pdfsettings.dll,acrobat pdf settings,Program Files,Adobe,Acrobat DC
+d,Blender Foundation,Program Files
+f,blender.exe,blender,Program Files,Blender Foundation
+f,readme.txt,About Blender 1.73: the Blender Foundation is proud to present Blender 1.73,Program Files,Blender Foundation
+f,copyright.txt,This version of Blender is subject to the GNU GPL license,Program Files,Blender Foundation
 d,Internet Explorer,Program Files
 d,Microsoft Office,Program Files
 d,Windows Defender,Program Files
 d,WindowsPowerShell,Program Files
 d,Users
+d,Bob,Users
+d,Desktop,Users,Bob
+d,Documents,Users,Bob
+d,Downloads,Users,Bob
+d,Music,Users,Bob
+d,Pictures,Users,Bob
 d,Windows

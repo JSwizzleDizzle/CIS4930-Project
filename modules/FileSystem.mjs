@@ -149,7 +149,6 @@ export class FileSystem
             var line = file[i].split(',');
                 if (line[0] === 'd')
                 {   
-                    alert(line.slice(2));
                     tree.addChildAbsolute(line[1], new Directory(line[1]), line.slice(2));
                 }
                 else if (line[0] === 'f')
