@@ -1,0 +1,12 @@
+                                YOU ARE A VIRUS;
+A PLAGUE TO THIS COMPUTER THAT CAN ONLY BE SATIATED THROUGH DESTRUCTION!!
+
+Navigate around each user's folders using LS and CD/CHDIR. Once you locate a file,
+take it for yourself using DEL.
+
+Wipe out anything that opposes you! Sometimes files fight back, other times an antivirus
+software will step in. Whatever happens, don't let yourself get taken down! 
+
+For a full list of commands, type HELP.
+
+                                  GOOD LUCK!!

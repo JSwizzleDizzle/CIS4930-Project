@@ -1,6 +1,6 @@
-For more information on a specific command, type HELP command-name
-CD             Displays the name of or changes the current directory.
-CHDIR          Displays the name of or changes the current directory.
+
+CD             Changes the current directory to a path specified (".." returns by one directory).
+CHDIR          Changes the current directory to a path specified (".." returns by one directory).
 CLS            Clears the screen.
 COLOR          Sets the default console foreground and background colors.
 DEL            Deletes one or more files.

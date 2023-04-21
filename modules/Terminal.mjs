@@ -3,6 +3,7 @@ import Vec2 from "./Vec2.mjs";
 import ResourceManager from "./ResourceManager.mjs";
 import BaseWindow from "./BaseWindow.mjs";
 import {FileSystem, FileData} from "./FileSystem.mjs";
+import User from "./UserStats.mjs";
 
 
 
@@ -27,6 +28,11 @@ class Terminal
     #awaitingCommand;
     #running;
     #numLines;
+    #enCounter;
+    #bossCounter;
+    #fighting;
+    #user;
+    #enemy;
 
     // HTML Elements
     #eWindow;
@@ -56,7 +62,9 @@ class Terminal
         ["title", "cmdTitle"], 
         ["tree", "cmdTree"], 
         ["terminal.exe", "cmdTerminalExe"],
-        ["ls", "cmdDirectory"]
+        ["ls", "cmdDirectory"],
+        ["enter", "cmdStart"],
+        ["att", "cmdAttack"]
     ]);
 
     constructor(parent, id, filesys = new FileSystem(), directory = `C:\\>`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
@@ -71,6 +79,10 @@ class Terminal
         this.#awaitingCommand = false;
         this.#running = false;
         this.#fileSystem = filesys;
+        this.#enCounter = 0;
+        this.#bossCounter = 2;
+        this.#fighting = false;
+        this.#user = new User("Guest",20,20*Math.random(),Math.random(),Math.random());
 
         this.#initialize();
     }
@@ -163,8 +175,11 @@ class Terminal
     #startPrompt()
     {
         this.printFile("resources/cmd-header.txt");
+        //Title screen
+        this.cmdTerminalExe();
+        
         this.#eTerminal.scrollTop = 0;
-        this.awaitCommand();
+        //this.awaitCommand();
     }
 
 
@@ -175,8 +190,15 @@ class Terminal
 
     cmdChangeDir(args)
     {   
-        this.printLine();
-        this.#fileSystem.getFileTree().moveTo([args]) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
+        if(this.#fighting){
+            this.printLine("You can't escape!!")
+        }
+        else if(this.#running){
+            this.printLine();
+            this.#fileSystem.getFileTree().moveTo([args]) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
+            //Encounter chance
+            this.#enCounter += Math.random();
+        }
         this.awaitCommand();
     }
     
@@ -187,6 +209,10 @@ class Terminal
         this.#eTextbox.innerHTML = "";
         this.#eTerminal.scrollTop = 0;
         this.printLine();
+        if(!this.#running){
+            this.cmdTerminalExe();
+            return;
+        }
         this.awaitCommand();
     }
 
@@ -263,19 +289,26 @@ class Terminal
 
     cmdDelete(args)
     {
+        if(this.#fighting){
+            this.printLine("You can't delete while in combat!!")
+        }
+        else if(this.#running){
         this.printLine();
         this.#fileSystem.fileTree.removeChild(args, this.#directory);
+        }
         this.awaitCommand();
     }
 
     cmdDirectory(args)
     {
+        if(this.#running){
         this.printLine();
         for (let [key, value] of this.#fileSystem.getFileTree().getNode().children)
         {
             this.printLine(value.name);
         }
         this.printLine();
+        }
         this.awaitCommand();
     }
     
@@ -321,10 +354,30 @@ class Terminal
     
     cmdTerminalExe(args)
     {
-        this.#running = true;
+        
+        //Music >:D
+        var audio = new Audio("resources/Terminal_Chillness.mp3");
+        audio.loop = false;
+
+        //If the user tries returning here while in a fight it'll just play the song
+        if(this.#fighting){
+            this.printLine("You got this!!");
+            audio.play();
+            this.awaitCommand();
+            return;
+        }
+        //this.#running = true;
         this.printFile("resources/intro.txt");
+        audio.play();
         this.enableInput();
-        this.#awaitingCommand = false;
+
+        //Temporary reload for guest stats
+        if(this.#user.hp <= 0){
+            this.#user = new User("Guest",20,20*Math.random(),Math.random(),Math.random());
+            return;
+        }
+        this.awaitCommand();
+        //this.#awaitingCommand = false;
     }
 
     #cmdError()
@@ -334,15 +387,109 @@ class Terminal
         this.awaitCommand();
     }
 
+    cmdStart(args)
+    {
+        this.printFile("resources/instructions.txt");
+        this.#running = true;
+        this.awaitCommand();
+    }
+
 
 
     ////////////////////////////////////////////////////////////////
     //  COMBAT COMMANDS
     ////////////////////////////////////////////////////////////////
+    #fight(){
+        //Bossmode
+        // if(this.#bossCounter >= 3){
+        //     this.#fighting = true;
+        //     let message = this.#fileSystem.getFileTree().getNode().name;
+        //     message += " boss attacks!!";
+        //     this.printLine(message);
+        //     this.#bossCounter = 0;
+        //     this.#user.boss();
+        // }
+        //Grunt (file)
+        if(this.#enCounter >= 1){
+            this.#user.grunt();
+            this.#fighting = true;
+            let message = this.#fileSystem.getFileTree().getNode().name;
+            message += " attacks!";
+            this.#enemy = "images/ascii-images/enemies/file.txt";
+            this.printLine(message);
+            this.printLine("TYPE ATT TO ATTACK AND INV TO ACCESS INVENTORY");
+            this.#enCounter = 0;
+            this.#bossCounter += Math.random();
+            this.printCharacters(this.#enemy);
+        }
+        else if(this.#fighting){
+            let attack = this.#user.enemyAtt();
+            let message = this.#fileSystem.getFileTree().getNode().name + " swings at you!";
+                this.printLine(message);
+            if(attack){
+                message = "Hits you for " + this.#user.damage + " damage!";
+                this.printLine(message);
+                if(this.#user.currentHp <= 0){
+                    this.printLine("You've been defeated! Gameover!")
+                    this.#fighting = false;
+                    this.#running = false;
+                    this.cmdTerminalExe();
+                    return;
+                }
+            }
+            else{
+                message = "It misses!"
+                this.printLine(message);
+            }
+            this.printCharacters(this.#enemy);
+        }
+    }
+
     printCharacters(enemy) 
-    {
+    {   
+        this.printLine("");
+        this.printLine("");
+        let enemyStat = "                            ENEMY HP: " + this.#user.enemyChp + "/" + this.#user.enemyHp;
+        this.printLine(enemyStat);
         this.printFile(enemy);
         this.printFile("images/ascii-images/bacteriophage.txt");
+        let status = "HP: " + this.#user.currentHp + "/" + this.#user.hp;
+            this.printLine("USER STATUS:");
+            this.printLine(status);
+        this.printLine("")
+    }
+
+    cmdAttack(args){
+        if(this.#fighting){
+            let attack = this.#user.att();
+            let message = "You attack!";
+                this.printLine(message);
+            if(attack){
+                message = "You hit for " + this.#user.damage + " damage!";
+                this.printLine(message);
+            }
+            else{
+                message = "You miss!"
+                this.printLine(message);
+            }
+            if(this.#user.enemyChp <= 0){
+                this.#fighting = false;
+                this.printLine("You defeated " + this.#fileSystem.getFileTree().getNode().name + "!");
+                this.#user.exp();
+                this.printLine("EXP gained: " + this.#user.enemyStr);
+                this.awaitCommand();
+                return;
+            }
+            this.printCharacters(this.#enemy);
+        }
+        else if(!this.#running){
+            this.printLine("Start the game first!");
+        }
+        else{
+            this.printLine("You lunge into the darkness!")
+            this.printLine("...but there was nobody to attack.")
+        }
+        this.awaitCommand()
     }
 
     ////////////////////////////////////////////////////////////////
@@ -388,6 +535,7 @@ class Terminal
 
     awaitCommand()
     {
+        this.#fight();
         this.#awaitingCommand = true;
         let directoryPath = this.#fileSystem.getFileTree().getCurrentPath().join('\\');
         directoryPath += '>';
