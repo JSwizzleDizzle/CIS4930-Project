@@ -412,6 +412,8 @@ class Terminal
         // }
         //Grunt (file)
         if(this.#enCounter >= 1){
+            this.#baseWindow.setSize(new Vec2(700, 800));
+            this.#baseWindow.setPos(new Vec2(600, 120));
             this.#user.grunt();
             this.#fighting = true;
             let message = this.#fileSystem.getFileTree().getNode().name;
@@ -474,6 +476,8 @@ class Terminal
                 this.printLine(message);
             }
             if(this.#user.enemyChp <= 0){
+                this.#baseWindow.setSize(new Vec2(976, 512));
+                this.#baseWindow.setPos(new Vec2(450, 320));
                 this.#fighting = false;
                 this.printLine("You defeated " + this.#fileSystem.getFileTree().getNode().name + "!");
                 this.#user.exp();
