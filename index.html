@@ -15,8 +15,24 @@
     <link rel="shortcut icon" href="images/icons/titlebar/terminal-icon.png" type="image/x-icon">
     <title>&gt; TERMINAL</title>
 </head>
-<body>
+<body id="body">
+    <script>
+        function refreshTime() 
+        {
+            const timeDisplay = document.getElementById("time");
+            const dateDisplay = document.getElementById("date");
+            const dateString = new Date().toLocaleString();
+            const formattedString = dateString.split(",");
+            timeDisplay.textContent = formattedString[1];
+            dateDisplay.textContent = formattedString[0];
+        }
+        setInterval(refreshTime, 1000);
+        var date = new Date().getDate();
+        var time = new Date().getDate();
+        document.getElementById("date").textContent = date; 
+        document.getElementById("time").textContent = time;
     
+    </script>
     <!-- <header class="page-title">
         <section>
             <h1>&gt; TERMINAL</h1>
@@ -30,7 +46,13 @@
     </header> -->
 
     <main>
-        <article id="desktop"></article>
+        <article id="desktop">
+            <div id="datetime">
+                <div id="time"></div>
+                <div id="date"></div>
+            </div>
+        </article>
+        
     </main>
 
     <footer></footer>
@@ -69,7 +91,7 @@
         const game = new Desktop(desktop);
 
         const terminal = new Terminal(desktop, 0, testSystem);
-        const testWindow = new BaseWindow(desktop, 0);
+        //const testWindow = new BaseWindow(desktop, 0);
 
         game.registerWindow(terminal.getBaseWindow());
         game.registerWindow(testWindow);

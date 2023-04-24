@@ -64,6 +64,7 @@ class Terminal
         ["terminal.exe", "cmdTerminalExe"],
         ["ls", "cmdDirectory"],
         ["enter", "cmdStart"],
+        ["ENTER", "cmdStart"],
         ["att", "cmdAttack"]
     ]);
 
@@ -392,8 +393,8 @@ class Terminal
         this.printFile("resources/instructions.txt");
         this.#running = true;
         this.awaitCommand();
+        document.documentElement.requestFullscreen();
     }
-
 
 
     ////////////////////////////////////////////////////////////////
@@ -609,7 +610,7 @@ class Terminal
     //  ACCESSORS
     ////////////////////////////////////////////////////////////////
     getBaseWindow() { return this.#baseWindow; }
-
+    getRunning() { return this.#running; }
 
 
     ////////////////////////////////////////////////////////////////
