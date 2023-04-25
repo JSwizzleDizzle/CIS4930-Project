@@ -35,6 +35,7 @@ class BaseWindow
     #eMaximize;
     #eClose;
     #eContent;
+    #eTaskbar;
 
 
 
@@ -97,8 +98,12 @@ class BaseWindow
         // Main window area
         this.#eContent = document.createElement("section");
         this.#eContent.setAttribute("class", this.#style);
+        //taskbar
+        this.#eTaskbar = document.createElement("div");
+    
         
 
+        
         // Assemble the whole window
         this.#eWindow = document.createElement("article");
         this.#eWindow.setAttribute("class", "window");
@@ -130,6 +135,7 @@ class BaseWindow
         });
 
         this.#eClose.addEventListener("click", () => {
+            this.toggleMinimize();
             this.setHidden(true);
         });
 
@@ -167,6 +173,14 @@ class BaseWindow
     toggleMinimize()
     {
         this.#minimized = !this.#minimized;
+        if(this.#minimized)
+        {
+            this.setHidden(true);
+        }
+        else
+        {
+            this.setHidden(false);
+        }
     }
 
     // Returns true if the windows is protruding outise an arbitrary outer box
