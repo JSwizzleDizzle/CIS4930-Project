@@ -42,7 +42,7 @@ main {
 }
 #date {
     position: relative;
-    left: 1440px;
+    left: 1240px;
     bottom: -18px;
     width: 80px;
     height: 20px;
@@ -50,7 +50,7 @@ main {
 #time {
     
     position: relative;
-    left: 1522px;
+    left: 1322px;
     bottom: -3px;
 }
 #taskbar {
