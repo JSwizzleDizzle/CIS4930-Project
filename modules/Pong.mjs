@@ -7,6 +7,7 @@ class Pong
     //  MEMBER ATTRIBUTES
     ////////////////////////////////////////////////////////////////
     #baseWindow;
+    #eTaskbar;
 
     // holds the canvas element of the game
     static canvas = document.createElement("canvas");
@@ -79,8 +80,7 @@ class Pong
     }
 
 
-
-    constructor(parent, id, title = "pong", icon = "pong", position = new Vec2(450, 320), size = new Vec2(600, 400)){
+    constructor(parent, id, title = "pong", icon = "pong", position = new Vec2(110, 320), size = new Vec2(600, 400)){
 
       this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
       Pong.gameState = Pong.GameStates.Start;
@@ -112,7 +112,7 @@ class Pong
       Pong.canvas.setAttribute("height", "400");
       Pong.context = Pong.canvas.getContext("2d");
       this.#ePong = this.#baseWindow.getWindowElements().eContent;
-      this.#ePong.appendChild(Pong.canvas);
+      this.#ePong.appendChild(Pong.canvas); 
     }
 
     // links audio
