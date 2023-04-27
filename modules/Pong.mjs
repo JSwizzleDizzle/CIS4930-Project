@@ -25,7 +25,16 @@ class Pong
 
 
     // game functions
-    #running;  
+
+    static gameState;
+
+    //enum for gamestates
+    static GameStates = {
+      ComputerWin : "ComputerWin",
+      UserWin : "UserWin",
+      Running : "Running",
+      Start : "Start"
+    }  
     #loop;
     #framePerSecond = 50;
 
@@ -74,9 +83,11 @@ class Pong
     constructor(parent, id, title = "pong", icon = "pong", position = new Vec2(450, 320), size = new Vec2(600, 400)){
 
       this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
+      Pong.gameState = Pong.GameStates.Start;
       this.#initialize();
       
     }
+
 
     ////////////////////////////////////////////////////////////////
     //  HELPER FUNCTIONS
@@ -87,7 +98,9 @@ class Pong
 
       this.#setupHTML();
       //this.#setupAudio();
-      Pong.canvas.addEventListener("mousemove", this.#getMousePos);
+      Pong.render();
+      this.#setupEventListeners();
+      
       this.#loop = setInterval(this.#game, 1000/this.#framePerSecond);
     }
 
@@ -109,6 +122,14 @@ class Pong
       Pong.wall.src = "./resources/sounds/wall.mp3";
       Pong.comScore.src = "./resources/sounds/comScore.mp3";
       Pong.userScore.src = "./resources/sounds/userScore.mp3";
+    }
+
+    #setupEventListeners(){
+
+      Pong.canvas.addEventListener("mousemove", this.#getMousePos);
+      Pong.canvas.addEventListener("click", () => {
+        Pong.gameState = Pong.GameStates.Running;
+      });
     }
 
     // for user paddle control
@@ -178,17 +199,29 @@ class Pong
     // updates ball position, and velocity
     // updates the user and computer scores
     // handles collisions between ball and borders/paddles
+    // updates gameState if user / computer score = 2
     static update(){
 
-      // change the score of players, if the ball goes too far left, computer wins, else user wins.
+      // change the score of players, if the ball goes too far left, computer wins, else user wins
+      // updates gameState if user / computer score = 2
       if( Pong.ball.x - Pong.ball.radius <= 0 ){
 
           Pong.com.score++;
+          if( Pong.com.score == 2 ){
+            Pong.gameState = Pong.GameStates.ComputerWin;
+            Pong.com.score = 0;
+            Pong.user.score = 0;
+          }
           //Pong.comScore.play();
           Pong.resetBall();
       }else if( Pong.ball.x + Pong.ball.radius > Pong.canvas.width ){
 
           Pong.user.score++;
+          if( Pong.user.score == 2 ){
+            Pong.gameState = Pong.GameStates.UserWin;
+            Pong.com.score = 0;
+            Pong.user.score = 0;
+          }
           //Pong.userScore.play();
           Pong.resetBall();
       }
@@ -237,35 +270,77 @@ class Pong
       }
     }
 
-    // draws background, user/computer scores, net, paddles, and ball
+    // draws background based on the gameState
     static render(){
+      switch( Pong.gameState ){
 
-      // clear the canvas
-      Pong.drawRect(0, 0, 600, 400, "black");
+        case Pong.GameStates.Start:
 
-      // draw the user score to the left
-      Pong.drawText(Pong.user.score,Pong.canvas.width/4,Pong.canvas.height/5);
+          // clear the canvas
+          Pong.drawRect(0, 0, 600, 400, "black");
 
-      // draw the COM score to the right
-      Pong.drawText(Pong.com.score,3*Pong.canvas.width/4,Pong.canvas.height/5);
+          // draw start text
+          Pong.drawText("Click to start",90, 150);
+          Pong.drawText("First to 2 wins",70, 240);
+          break;
 
-      // drwaw the net
-      Pong.drawNet();
 
-      // draw the user paddle
-      Pong.drawRect(Pong.user.x,Pong.user.y,Pong.user.width,Pong.user.height,Pong.user.color);
+        case Pong.GameStates.Running:
+          
+          // clear the canvas
+          Pong.drawRect(0, 0, 600, 400, "black");
 
-      // draw the com paddle
-      Pong.drawRect(Pong.com.x,Pong.com.y,Pong.com.width,Pong.com.height,Pong.com.color);
+          // draw the user score to the left
+          Pong.drawText(Pong.user.score,Pong.canvas.width/4,Pong.canvas.height/5);
 
-      // draw the ball
-      Pong.drawCircle(Pong.ball.x,Pong.ball.y,Pong.ball.radius,Pong.ball.color);
+          // draw the COM score to the right
+          Pong.drawText(Pong.com.score,3*Pong.canvas.width/4,Pong.canvas.height/5);
+          
+          // draw the net
+          Pong.drawNet();
+
+          // draw the user paddle
+          Pong.drawRect(Pong.user.x,Pong.user.y,Pong.user.width,Pong.user.height,Pong.user.color);
+
+          // draw the com paddle
+          Pong.drawRect(Pong.com.x,Pong.com.y,Pong.com.width,Pong.com.height,Pong.com.color);
+
+          // draw the ball
+          Pong.drawCircle(Pong.ball.x,Pong.ball.y,Pong.ball.radius,Pong.ball.color);
+          break;
+
+
+        case Pong.GameStates.ComputerWin:
+
+          // clear the canvas
+          Pong.drawRect(0, 0, 600, 400, "black");
+
+          // draw losing text
+          Pong.drawText("u suck bro.", 90, 180);
+          Pong.drawText("try again?", 100, 300)
+          break;
+        
+
+        case Pong.GameStates.UserWin:
+
+          // clear the canvas
+          Pong.drawRect(0, 0, 600, 400, "black");
+
+          // draw winning text
+          Pong.drawText("u win! u gain _", 70, 180);
+          break;
+        
+      }
+      
     }
 
     #game(){
+      if(Pong.gameState == Pong.GameStates.Running) {
 
-      Pong.update();
-      Pong.render();
+        Pong.update();
+        Pong.render();
+      }
+
     }
 
     ////////////////////////////////////////////////////////////////
