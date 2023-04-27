@@ -1,5 +1,4 @@
 import Vec2 from "./Vec2.mjs";
-import ResourceManager from "./ResourceManager.mjs";
 import BaseWindow from "./BaseWindow.mjs";
 
 class Pong
@@ -9,146 +8,270 @@ class Pong
     ////////////////////////////////////////////////////////////////
     #baseWindow;
 
-    #gameState;
+    // holds the canvas element of the game
+    static canvas = document.createElement("canvas");
 
-    #paddle_1_coord;
-    #paddle_2_coord;
-    #initial_ball_coord;
-    #ball_coord;
+    // holds the methods and properties to draw on the canvas
+    static context;
 
-    #dx;
-    #dy;
-    #dxd;
-    #dyd;
+    //html holding eContents from baseWindow
+    #ePong;
 
-    //HTML elements
-    #gameBoard
-    #paddle_common;
-    #eWindow;
-    #initial_ball;
-    #ball;
-    #scoreText;
-    #message;
+    //sounds
+    static hit = new Audio();
+    static wall = new Audio();
+    static userScore = new Audio();
+    static comScore = new Audio();
 
-    constructor(parent, id, title = "pong", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
-    {
-        this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
 
-        this.#gameState = 'start';
-        this.#dx = Math.floor(Math.random() * 4) + 3;
-        this.#dy = Math.floor(Math.random() * 4) + 3;
-        this.#dxd = Math.floor(Math.random() * 2);
-        this.#dyd = Math.floor(Math.random() * 2);
-        
-        this.#initialize();
+    // game functions
+    #running;  
+    #loop;
+    #framePerSecond = 50;
+
+    //=============================objects=============================//
+
+    static ball = {
+      x : 300, //
+      y : 200,
+      radius : 10,
+      velocityX : 5,
+      velocityY : 5,
+      speed : 8,
+      color : "WHITE"
+    }
+
+    //user paddle
+    static user = {
+      x : 0,
+      y : 150,
+      width : 10,
+      height : 100,
+      score : 0,
+      color : "WHITE"
+    }
+
+    //computer paddle
+    static com = {
+      x : 590,
+      y : 150,
+      width : 10,
+      height : 100,
+      score : 0,
+      color : "WHITE"
+    }
+
+    static net = {
+      x : 299,
+      y : 0,
+      height : 10,
+      width : 2,
+      color : "WHITE"
+    }
+
+
+
+    constructor(parent, id, title = "pong", icon = "pong", position = new Vec2(450, 320), size = new Vec2(600, 400)){
+
+      this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
+      this.#initialize();
+      
     }
 
     ////////////////////////////////////////////////////////////////
     //  HELPER FUNCTIONS
     ////////////////////////////////////////////////////////////////
-    // Sets up terminal context and variables
-    #initialize()
-    {
-        this.#setupHTML();
-        //this.#setupCoords();
-        //this.#setupEventListeners();
+
+    // Sets up html, audio, event listeners, and refresh loop
+    #initialize(){
+
+      this.#setupHTML();
+      //this.#setupAudio();
+      Pong.canvas.addEventListener("mousemove", this.#getMousePos);
+      this.#loop = setInterval(this.#game, 1000/this.#framePerSecond);
     }
 
-    // Generates the HTML for a terminal
-    #setupHTML()
-    {
-        this.#ball = document.createElement("div");
-        this.#ball.setAttribute("id", "ball");
-        this.#paddle_1 = document.createElement("div");
-        this.#paddle_1.setAttribute("id", "paddle paddle_1");
-        this.#paddle_2 = document.createElement("div");
-        this.#paddle_2.setAttribute("id", "paddle paddle_2");
-        this.#scoreText = document.createElement("div");
-        this.#scoreText.setAttribute("id", "scoreText");
-        this.#message.setAttribute("id", "message");
-        this.#gameBoard = document.createElement("canvas");
-        this.#gameBoard.setAttribute("id", "gameBoard");
-        this.#gameBoard.appendChild(this.#ball);
-        this.#gameBoard.appendChild(this.#paddle_1);
-        this.#gameBoard.appendChild(this.#paddle_2);
-        this.#gameBoard.appendChild(this.#message);
-        this.#eWindow = this.#baseWindow.getWindowElements().eContent;
-        this.#eWindow.appendChild(this.#gameBoard);
+    // sets up the canvas element holding the game
+    #setupHTML(){
 
-    }
-    #setupCoords()
-    {
-        this.#paddle_common = document.getElementById('paddle').getBoundingClientRect();
-        this.#paddle_1_coord = this.paddle_1.getBoundingClientRect();
-        this.#paddle_2_coord = this.paddle_2.getBoundingClientRect();
-        this.#initial_ball_coord = this.#ball.getBoundingClientRect();
-        this.#initial_ball = document.getElementById('ball');
-        this.#ball_coord = this.#initial_ball_coord;
-        this.#ball_coord = this.#board.getBoundingClientRect();
+      Pong.canvas.setAttribute("id", "pong");
+      Pong.canvas.setAttribute("width", "600");
+      Pong.canvas.setAttribute("height", "400");
+      Pong.context = Pong.canvas.getContext("2d");
+      this.#ePong = this.#baseWindow.getWindowElements().eContent;
+      this.#ePong.appendChild(Pong.canvas);
     }
 
-    // Initializes cmd window event listeners
-    #setupEventListeners()
-    {
-        document.addEventListener('keydown', (e) => {
-            if (e.key == 'Enter') {
-              gameState = gameState == 'start' ? 'play' : 'start';
-              if (gameState == 'play') {
-                message.innerHTML = 'Game Started';
-                message.style.left = 42 + 'vw';
-                requestAnimationFrame(() => {
-                  dx = Math.floor(Math.random() * 4) + 3;
-                  dy = Math.floor(Math.random() * 4) + 3;
-                  dxd = Math.floor(Math.random() * 2);
-                  dyd = Math.floor(Math.random() * 2);
-                  moveBall(dx, dy, dxd, dyd);
-                });
-              }
-            }
-            if (gameState == 'play') {
-                if (e.key == 'w') {
-                  paddle_1.style.top =
-                    Math.max(
-                      board_coord.top,
-                      paddle_1_coord.top - window.innerHeight * 0.06
-                    ) + 'px';
-                  paddle_1_coord = paddle_1.getBoundingClientRect();
-                }
-                if (e.key == 's') {
-                  paddle_1.style.top =
-                    Math.min(
-                      board_coord.bottom - paddle_common.height,
-                      paddle_1_coord.top + window.innerHeight * 0.06
-                    ) + 'px';
-                  paddle_1_coord = paddle_1.getBoundingClientRect();
-                }
-            
-                if (e.key == 'ArrowUp') {
-                  paddle_2.style.top =
-                    Math.max(
-                      board_coord.top,
-                      paddle_2_coord.top - window.innerHeight * 0.1
-                    ) + 'px';
-                  paddle_2_coord = paddle_2.getBoundingClientRect();
-                }
-                if (e.key == 'ArrowDown') {
-                  paddle_2.style.top =
-                    Math.min(
-                      board_coord.bottom - paddle_common.height,
-                      paddle_2_coord.top + window.innerHeight * 0.1
-                    ) + 'px';
-                  paddle_2_coord = paddle_2.getBoundingClientRect();
-                }
-              }
-            });
+    // links audio
+    #setupAudio(){
+
+      Pong.hit.src = "./resources/sounds/hit.mp3";
+      Pong.wall.src = "./resources/sounds/wall.mp3";
+      Pong.comScore.src = "./resources/sounds/comScore.mp3";
+      Pong.userScore.src = "./resources/sounds/userScore.mp3";
     }
 
+    // for user paddle control
+    #getMousePos(evt){
+
+      let rect = Pong.canvas.getBoundingClientRect();
+      Pong.user.y = evt.clientY - rect.top - Pong.user.height/2;
+    }
+    
+    // for paddles and net
+    static drawRect(x, y, w, h, color){
+
+      Pong.context.fillStyle = color;
+      Pong.context.fillRect(x, y, w, h);
+    }
+
+    // for ball
+    static drawCircle(x, y, r, color){
+
+      Pong.context.fillStyle = color;
+      Pong.context.beginPath();
+      Pong.context.arc(x, y, r, 0, Math.PI*2, false);
+      Pong.context.closePath();
+      Pong.context.fill();
+    }
+
+    // after user / com scores, reset the ball
+    static resetBall(){
+
+      Pong.ball.x = Pong.canvas.width/2;
+      Pong.ball.y = Pong.canvas.height/2;
+      Pong.ball.velocityX = -Pong.ball.velocityX;
+      Pong.ball.speed = 8;
+    }
+
+    static drawNet(){
+
+      for(let i = 0; i <= Pong.canvas.height; i+=15)
+      {
+        Pong.drawRect(Pong.net.x, Pong.net.y + i, Pong.net.width, Pong.net.height, Pong.net.color);
+      }
+    }
+
+    static drawText(text, x, y){
+
+      Pong.context.fillStyle = "#FFF";
+      Pong.context.font = "75px fantasy";
+      Pong.context.fillText(text, x, y);
+    }
+
+    // handles collision between ball and paddle
+    static collision(b, p){
+
+      p.top = p.y;
+      p.bottom = p.y + p.height;
+      p.left = p.x;
+      p.right = p.x + p.width;
+
+      b.top = b.y - b.radius;
+      b.bottom = b.y + b.radius;
+      b.left = b.x - b.radius;
+      b.right = b.x + b.radius;
+
+      return p.left < b.right && p.top < b.bottom && p.right > b.left && p.bottom > b.top;
+    }
+
+    // updates ball position, and velocity
+    // updates the user and computer scores
+    // handles collisions between ball and borders/paddles
+    static update(){
+
+      // change the score of players, if the ball goes too far left, computer wins, else user wins.
+      if( Pong.ball.x - Pong.ball.radius <= 0 ){
+
+          Pong.com.score++;
+          //Pong.comScore.play();
+          Pong.resetBall();
+      }else if( Pong.ball.x + Pong.ball.radius > Pong.canvas.width ){
+
+          Pong.user.score++;
+          //Pong.userScore.play();
+          Pong.resetBall();
+      }
+
+      // the ball has a velocity
+      Pong.ball.x += Pong.ball.velocityX;
+      Pong.ball.y += Pong.ball.velocityY;
+
+      // simple AI for computer paddle
+      Pong.com.y += ((Pong.ball.y - (Pong.com.y + Pong.com.height/2)))*0.1;
+
+      // when the ball collides with bottom and top walls we inverse the y velocity
+      if( Pong.ball.y - Pong.ball.radius < 0 || Pong.ball.y + Pong.ball.radius > Pong.canvas.height ){
+
+          Pong.ball.velocityY = -Pong.ball.velocityY;
+          //Pong.wall.play();
+      }
+
+      // check if the paddle hit the user or the com paddle
+      let player = (Pong.ball.x + Pong.ball.radius < Pong.canvas.width/2) ? Pong.user : Pong.com;
+
+      // if the ball hits a paddle
+      if( Pong.collision(Pong.ball, player) ){
+
+          //play sound
+          //Pong.hit.play();
+
+          // we check where the ball hits the paddle
+          let collidePoint = (Pong.ball.y - (player.y + player.height/2));
+
+          // normalize the value of collidePoint, we need to get numbers between -1 and 1
+          collidePoint = collidePoint / (player.height/2);
+
+          // when the ball hits the top of a paddle, take a -45 degree angle
+          // when the ball hits the center of the paddle, take a 0 degree angle
+          // when the ball hits the bottom of the paddle, take a 45 degree angle
+          let angleRad = (Math.PI/4) *  collidePoint;
+
+          // change the X and Y velocity direction
+          let direction = (Pong.ball.x + Pong.ball.radius < Pong.canvas.width/2) ? 1 : -1;
+          Pong.ball.velocityX = direction * Pong.ball.speed * Math.cos(angleRad);
+          Pong.ball.velocityY = Pong.ball.speed * Math.sin(angleRad);
+
+          // speed up the ball every time a paddle hits it
+          Pong.ball.speed += 0.25;
+      }
+    }
+
+    // draws background, user/computer scores, net, paddles, and ball
+    static render(){
+
+      // clear the canvas
+      Pong.drawRect(0, 0, 600, 400, "black");
+
+      // draw the user score to the left
+      Pong.drawText(Pong.user.score,Pong.canvas.width/4,Pong.canvas.height/5);
+
+      // draw the COM score to the right
+      Pong.drawText(Pong.com.score,3*Pong.canvas.width/4,Pong.canvas.height/5);
+
+      // drwaw the net
+      Pong.drawNet();
+
+      // draw the user paddle
+      Pong.drawRect(Pong.user.x,Pong.user.y,Pong.user.width,Pong.user.height,Pong.user.color);
+
+      // draw the com paddle
+      Pong.drawRect(Pong.com.x,Pong.com.y,Pong.com.width,Pong.com.height,Pong.com.color);
+
+      // draw the ball
+      Pong.drawCircle(Pong.ball.x,Pong.ball.y,Pong.ball.radius,Pong.ball.color);
+    }
+
+    #game(){
+
+      Pong.update();
+      Pong.render();
+    }
 
     ////////////////////////////////////////////////////////////////
     //  ACCESSORS
     ////////////////////////////////////////////////////////////////
     getBaseWindow() { return this.#baseWindow; }
-
 }
 
 export default Pong;
