@@ -66,6 +66,7 @@
         import NameTree from "./modules/NameTree.mjs";
         import {FileSystem, FileData} from "./modules/FileSystem.mjs";
         import Pong from "./modules/Pong.mjs";
+        import FlappyBird from "./modules/FlappyBird.mjs";
 
         // Tree testing
         
@@ -93,9 +94,11 @@
 
         const terminal = new Terminal(desktop, 0, testSystem);
         const pong = new Pong(desktop, 1);
+        const flappybird = new FlappyBird(desktop, 2);
 
         game.registerWindow(terminal.getBaseWindow());
         game.registerWindow(pong.getBaseWindow());
+        game.registerWindow(flappybird.getBaseWindow());
 
     </script>
 </body>
