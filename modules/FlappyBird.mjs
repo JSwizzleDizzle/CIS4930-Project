@@ -52,7 +52,7 @@ class FlappyBird
         holePos : -1
     }
 
-    constructor(parent, id, title = "FlappyBird", icon = "Pong", position = new Vec2(110, 320), size = new Vec2(500, 600)){
+    constructor(parent, id, title = "FlappyBird", icon = "FlappyBird", position = new Vec2(1400, 0), size = new Vec2(500, 600)){
 
         this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
         FlappyBird.gameState = FlappyBird.GameStates.Start;
