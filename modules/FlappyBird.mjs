@@ -207,7 +207,10 @@ class FlappyBird
         if( FlappyBird.user.x == FlappyBird.pipe1.x || FlappyBird.user.x == FlappyBird.pipe2.x || FlappyBird.user.x == FlappyBird.pipe3.x ) FlappyBird.user.score++;
 
         // check if score == 30
-        if( FlappyBird.user.score == 30 ) FlappyBird.gameState = FlappyBird.GameStates.Win;
+        if( FlappyBird.user.score == 30 || FlappyBird.gameState == FlappyBird.GameStates.Win ){
+            FlappyBird.gameState = FlappyBird.GameStates.Win;
+            return;
+        }
 
         // move bird position
         FlappyBird.Fly();
