@@ -127,20 +127,6 @@ export class FileSystem
     // MUTATORS
     loadFromFile(s)
     {
-        // var s = "";
-        // var fs = new XMLHttpRequest();
-        // fs.onload = function() {
-        //     s = fs.responseText;
-        // }
-        // fs.open("GET", filename, true);
-        // fs.send();
-
-        // const fs = require('fs');
-        // fs.readFile(filename, (err, data) => {
-        //     if (err) throw err;
-        //     s = data.toString();
-        // })
-
         var file = s.split(/\r?\n/);
         var line = file[0].split(',');
         var tree = new NameTree(new Directory(line[1]), line[1]);
