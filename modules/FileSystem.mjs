@@ -223,35 +223,122 @@ class FileSystem
 
 
     // ================ ACCESSORS ================ //
-    getFile() {}
-    getDirectory() {}
+    getFile()
+    {
+
+    }
+
+    getDirectory()
+    {
+
+    }
+
+    getPath()
+    {
+        
+    }
+
 
 
     // ================ MUTATORS ================ //
-    setLocation(path) {}
-    setLocationAbsolute(path) {}
+    setLocation(path)
+    {
 
-    addDirectory() {}
-    addDirectories() {}
-    addFile() {}
-    addFiles() {}
+    }
 
-    deleteDirectory(dirName) {}
-    deleteDirectories(dirNames) {}
-    deleteFile(fileName) {}
-    deleteFiles(fileNames) {}
+    setLocationAbsolute(path)
+    {
 
-    moveDirectory(path) {}
-    moveDirectories(path) {}
-    moveFile(path) {}
-    moveFiles(path) {}
+    }
+
+
+    addDirectory()
+    {
+
+    }
+
+    addDirectories()
+    {
+
+    }
+
+    addFile()
+    {
+
+    }
+
+    addFiles()
+    {
+
+    }
+
+
+    deleteDirectory(dirName)
+    {
+
+    }
+
+    deleteDirectories(dirNames)
+    {
+
+    }
+
+    deleteFile(fileName)
+    {
+
+    }
+
+    deleteFiles(fileNames)
+    {
+
+    }
+
+
+    moveDirectory(path)
+    {
+
+    }
+
+    moveDirectories(path)
+    {
+
+    }
+
+    moveFile(path)
+    {
+
+    }
+
+    moveFiles(path)
+    {
+
+    }
     
-    moveDirectoryAbsolute(path) {}
-    moveDirectoriesAbsolute(path) {}
-    moveFileAbsolute(path) {}
-    moveFilesAbsolute(path) {}
+    moveDirectoryAbsolute(path)
+    {
 
-    buildFromFile(file) {}
+    }
+
+    moveDirectoriesAbsolute(path)
+    {
+
+    }
+
+    moveFileAbsolute(path)
+    {
+
+    }
+
+    moveFilesAbsolute(path)
+    {
+
+    }
+
+
+    buildFromFile(file)
+    {
+
+    }
     
 }
 
