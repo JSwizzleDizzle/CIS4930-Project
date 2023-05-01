@@ -58,14 +58,16 @@ export class TextFile extends FileData
 {
     #type;
     #content;
+    #locked;
 
-    constructor(name, content, deletable = true, date = Date.now())
+    constructor(name, content, deletable = true, lock = false, date = Date.now())
     {
         super(name, date, deletable);
         this.#content = content;
+        this.#locked = lock;
     }
-
-
+    
+    isLocked() { return this.#locked; }
 }
 
 
@@ -140,6 +142,10 @@ export class FileSystem
                 else if (line[0] === 'f')
                 {
                     tree.addChildAbsolute(line[1], new TextFile(line[1], line[2]), line.slice(3));
+                }
+                else if (line[0] === 'lf')
+                {
+                    tree.addChildAbsolute(line[1], new TextFile(line[1], line[2], true, true), line.slice(3));
                 }
         }
         this.#fileTree = tree;

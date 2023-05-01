@@ -66,7 +66,10 @@ class Terminal
         ["ls", "cmdDirectory"],
         ["enter", "cmdStart"],
         ["ENTER", "cmdStart"],
-        ["att", "cmdAttack"]
+        ["att", "cmdAttack"],
+        ["inv", "cmdInventory"],
+        ["inventory", "cmdInventory"],
+        ["use", "cmdUseItem"]
     ]);
 
     constructor(parent, id, filesys = new FileSystem(), directory = `C:\\>`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
@@ -314,6 +317,18 @@ class Terminal
             {
                 this.printLine("'" + args + "' is not deletable");
             }
+            else if (this.#fileSystem.getFileTree().getData([args]).isLocked())
+            {
+                if (this.#user.removeItem("key"))
+                {
+                    this.printLine("1 file key consumed!")
+                    this.printLine("'" + args + "' was successfully unlocked and deleted")
+                }
+                else
+                {
+                    this.printLine("ERROR: '" + args + "' is locked! collect a file key to delete it")
+                }
+            }
             else
             {
                 this.#fileSystem.getFileTree().removeChild(args);
@@ -331,7 +346,7 @@ class Terminal
                 {
                     if(this.#user.addItem("key"))
                     {
-                        this.printLine("1 key added to inventory!");
+                        this.printLine("1 file key added to inventory!");
                     }
                 }
             }
@@ -373,6 +388,15 @@ class Terminal
     cmdHelp(args)
     {
         this.printFile("resources/help.txt");
+        this.awaitCommand();
+    }
+
+    cmdInventory(args)
+    {
+        this.printLine("---------- INVENTORY ----------");
+        this.printLine("corrupted files (healing): " + this.#user.inventory.items.get("heal"));
+        this.printLine("file keys (access): " + this.#user.inventory.items.get("keys"));
+        this.printLine("enter 'use [ ITEM_NAME ]' to use an item");
         this.awaitCommand();
     }
 
@@ -419,6 +443,32 @@ class Terminal
         }
         this.awaitCommand();
         //this.#awaitingCommand = false;
+    }
+
+    cmdUseItem(args)
+    {
+        if (args == "corrupted file" || args == "heal")
+        {
+            if (this.#user.removeItem("heal"))
+            {
+                let healamt = this.#user.heal();
+                this.printLine("Corrupted File comnsumed successfully! " + healamt + " health points restored")
+            }
+            else
+            {
+                this.printLine("ERROR: no corrupted files in inventory!")
+            }
+        }
+
+        else if (args == "file key" || args == "filekey" || args == "key")
+        {
+            this.printLine("ERROR: keys are used automatically when deleting locked files")
+        }
+        
+        else
+        {
+            this.printLine("ERROR: no item '" + args + "' in inventory. Enter 'inv' to view inventory")
+        }
     }
 
     #cmdError()

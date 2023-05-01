@@ -46,7 +46,7 @@ d,Bob,Users
 d,Desktop,Users,Bob
 d,Documents,Users,Bob
 d,Finances,Users,Bob,Documents
-f,jan_2003_expenses.xls,january 2003 expenses,Users,Bob,Documents,Finances
+lf,jan_2003_expenses.xls,january 2003 expenses,Users,Bob,Documents,Finances
 f,feb_2003_expenses.xls,february 2003 expenses,Users,Bob,Documents,Finances
 f,mar_2003_expenses.xls,march 2003 expenses,Users,Bob,Documents,Finances
 f,apr_2003_expenses.xls,april 2003 expenses,Users,Bob,Documents,Finances
