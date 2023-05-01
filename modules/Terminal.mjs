@@ -299,12 +299,27 @@ class Terminal
 
     cmdDelete(args)
     {
-        if(this.#fighting){
+        if(this.#fighting)
+        {
             this.printLine("You can't delete while in combat!!")
         }
-        else if(this.#running){
-        this.printLine();
-        this.#fileSystem.fileTree.removeChild(args, this.#directory);
+        else if(this.#running)
+        {
+            this.printLine();
+            if (!this.#fileSystem.getFileTree().getData([args]))
+            {
+                this.printLine("'" + args + "' does not exist");
+            }
+            else if (!this.#fileSystem.getFileTree().getData([args]).isDeletable())
+            {
+                this.printLine("'" + args + "' is not deletable");
+            }
+            else
+            {
+                this.#fileSystem.getFileTree().removeChild(args);
+                this.printLine("'" + args + "' was successfully deleted");
+            }
+            
         }
         this.awaitCommand();
     }
