@@ -7,6 +7,23 @@
 //<html>
 
 //<script>
+
+class Inventory
+{
+    profileName;
+    items;
+
+    constructor(pname = "", healqty = 0, keyqty = 0)
+    {
+        this.profileName = pname;
+        this.items = new Map();
+        this.items.set("heal", healqty);
+        this.items.set("keys", keyqty);
+    }
+
+
+}
+
     class User
     {
         uName;
@@ -16,6 +33,7 @@
         def;
         eva;
         location;
+        inventory;
         //Enemy stats
         enemyHp;
         enemyChp;
@@ -26,13 +44,55 @@
         //Others
         damage;
 
-        constructor(username, health, strength, defense, evasion){
+        constructor(username, health, strength, defense, evasion, heals = 0, keys = 0){
             this.uName = username;
             this.hp = health;
             this.currentHp = health;
             this.str = strength;
             this.def = defense;
             this.eva = evasion;
+            this.inventory = new Inventory(username, heals, keys);
+        }
+
+        loadInventory(heals, keys)
+        {
+            this.inventory = new Inventory(this.uName, heals, keys)
+        }
+
+        addItem(type)
+        {
+            if (type == "heal")
+            {
+                this.inventory.items.set("heal", this.inventory.items.get("heal") + 1);
+                return true;
+            }
+
+            else if (type == "key")
+            {
+                this.inventory.items.set("key", this.inventory.items.get("keys") + 1);
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+
+        removeItem(type)
+        {
+            if (type == "heal" && this.inventory.items.get("heal") > 0)
+            {
+                this.inventory.items.set("heal", this.inventory.items.get("heal") - 1);
+                return true;
+            }
+
+            else if (type == "key" && this.inventory.items.get("keys") > 0)
+            {
+                this.inventory.items.set("key", this.inventory.items.get("keys") - 1);
+                return true;
+            }
+            else{
+                return false;
+            }
         }
     
     //<?php 

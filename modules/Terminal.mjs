@@ -318,6 +318,22 @@ class Terminal
             {
                 this.#fileSystem.getFileTree().removeChild(args);
                 this.printLine("'" + args + "' was successfully deleted");
+
+                let chance = Math.random();
+                if (chance < 0.2)
+                {
+                    if(this.#user.addItem("heal"))
+                    {
+                        this.printLine("1 corrupted file added to inventory!");
+                    }
+                }
+                if (chance > 0.9)
+                {
+                    if(this.#user.addItem("key"))
+                    {
+                        this.printLine("1 key added to inventory!");
+                    }
+                }
             }
             
         }
