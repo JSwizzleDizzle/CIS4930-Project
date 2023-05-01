@@ -211,15 +211,14 @@ class FileFolder
 * Directory NameTree nodes are directories which hold FileFolders as data and other directories as children
 * The top directory is called "ROOT", which houses entire drives as its direct children
 */
-class FileSystem
+export class FileSystem
 {
     #fileTree;
 
-    constructor()
+    constructor(tree = null)
     {
         this.#fileTree = new NameTree(new FileFolder("ROOT"));
     }
-
 
 
     // ================ ACCESSORS ================ //
@@ -344,4 +343,4 @@ class FileSystem
 
 
 
-export default FileSystem; 
+// export default FileSystem;

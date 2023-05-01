@@ -1,0 +1,69 @@
+d,C:
+d,Program Files
+d,Adobe,Program Files
+d,Acrobat DC,Program Files,Adobe
+d,Assets,Program Files,Adobe,Acrobat DC
+f,logo.png,adobe logo,Program Files,Adobe,Acrobat DC,Assets
+f,Acrobat.exe,acrobat,Program Files,Adobe,Acrobat DC
+f,pdfsettings.dll,acrobat pdf settings,Program Files,Adobe,Acrobat DC
+d,Blender Foundation,Program Files
+f,blender.exe,blender,Program Files,Blender Foundation
+f,readme.txt,About Blender 1.73: the Blender Foundation is proud to present Blender 1.73,Program Files,Blender Foundation
+f,copyright.txt,This version of Blender is subject to the GNU GPL license,Program Files,Blender Foundation
+d,Internet Explorer,Program Files
+d,images,Program Files,Internet Explorer
+f,bing.png,bing logo,Program Files,Internet Explorer,images
+f,iediagcmd.exe,diagonstics utility for internet explorer,Program Files,Internet Explorer
+f,iexplore.exe,internet explorer,Program Files,Internet Explorer
+d,Microsoft Office,Program Files
+d,root,Program Files,Microsoft Office
+d,Licenses,Program Files,Microsoft Office,root
+f,licensefiles_auto.xml,office license files,Program Files,Microsoft Office,root,Licenses
+d,Office,Program Files,Microsoft Office,root
+f,excel.exe,microsoft excel,Program Files,Microsoft Office,root,Office
+f,powerpnt.exe,microsoft powerpoint,Program Files,Microsoft Office,root,Office
+f,winword.exe,microsoft word,Program Files,Microsoft Office,root,Office
+d,Windows Defender,Program Files
+d,Offline,Program Files,Windows Defender
+f,OfflineScannerShell.exe,offline windows defender shell,Program Files,Windows Defender,Offline
+f,MsMpEng.exe,antimalware service executable,Program Files,Windows Defender
+f,NisSrv.exe,microsoft network realtime inspection service,Program Files,Windows Defender
+f,ThirdPartyNotices.txt,Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the Apache License Version 2.0,Program Files,Windows Defender
+d,WindowsPowerShell,Program Files
+d,Diagnostics,Program Files,WindowsPowerShell
+f,ComprehensiveTests.ps1,windows powershell validation,Program Files,WindowsPowerShell,Diagnostics
+d,PackageManagement,Program Files,WindowsPowerShell
+f,PackageManagement.ps1,windows powershell package manager,Program Files,WindowsPowerShell,PackageManagement
+f,PackageProviderFunctions.ps1,windows powershell package provider functions,Program Files,WindowsPowerShell,PackageManagement
+d,PowerShellGet,Program Files,WindowsPowerShell
+f,PowerShellGet.psd1,windows powershell data file,Program Files,WindowsPowerShell,PowerShellGet
+f,PSModule.psm1,windows powershell script module,Program Files,WindowsPowerShell,PowerShellGet
+d,PSReadline,Program Files,WindowsPowerShell
+f,PSReadline.psd1,windows powershell data file,Program Files,WindowsPowerShell,PSReadline
+f,PSReadline.psm1,windows powershell script module,Program Files,WindowsPowerShell,PSReadline
+d,Users
+d,Bob,Users
+d,Desktop,Users,Bob
+d,Documents,Users,Bob
+d,Finances,Users,Bob,Documents
+f,jan_2003_expenses.xls,january 2003 expenses,Users,Bob,Documents,Finances
+f,feb_2003_expenses.xls,february 2003 expenses,Users,Bob,Documents,Finances
+f,mar_2003_expenses.xls,march 2003 expenses,Users,Bob,Documents,Finances
+f,apr_2003_expenses.xls,april 2003 expenses,Users,Bob,Documents,Finances
+f,2002taxreturn.pdf,2002 tax return,Users,Bob,Documents,Finances
+d,Housing,Users,Bob,Documents
+f,apartmentlease_2001.pdf,2001 apartment lease,Users,Bob,Documents,Housing
+f,apartmentlease_2002.pdf,2002 apartment lease,Users,Bob,Documents,Housing
+d,Work Stuff,Users,Bob,Documents
+f,contract.pdf,employment contract,Users,Bob,Documents,Work Stuff
+d,Downloads,Users,Bob
+f,asdf.png,???,Users,Bob,Downloads
+d,Music,Users,Bob
+d,Pictures,Users,Bob
+d,Windows
+d,System32,Windows
+d,Resources,Windows
+d,Temp,Windows
+f,explorer.exe,Windows Explorer,Windows
+f,system.ini,configuration settings,Windows
+f,win.ini,configuration settings,Windows

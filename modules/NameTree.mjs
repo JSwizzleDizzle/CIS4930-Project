@@ -50,7 +50,7 @@ class NameTree
     //  HELPER METHODS
     ////////////////////////////////////////////////////////////////
 
-    // Moves from one tree location to another via a name path
+    // Moves from one tree location to another via a name path, returns false if the path is not found
     #navigateFrom(currentNode, path)
     {
         let travelNode = currentNode;
@@ -58,11 +58,11 @@ class NameTree
         {
             travelNode = name === ".." ? travelNode.parent : travelNode.children.get(name);
         }
-        return travelNode;
+        return travelNode === undefined ? false : travelNode;
     }
 
     // Specific case of navigate: from nodePtr
-    #getNode(path = [])
+    getNode(path = [])
     {
         return this.#navigateFrom(this.#nodePtr, path);
     }
@@ -82,7 +82,7 @@ class NameTree
     // Retrieve node data
     getData(path = [])
     {
-        return this.#getNode(path).data;
+        return this.getNode(path).data;
     }
 
     getDataAbsolute(path = [])
@@ -104,7 +104,11 @@ class NameTree
         return path.reverse();
     }
 
-
+    getParent()
+    {
+        this.#nodePtr = this.#nodePtr.parent;
+        return this.#nodePtr.parent;
+    }
 
     ////////////////////////////////////////////////////////////////
     //  MUTATORS:
@@ -115,7 +119,7 @@ class NameTree
     // Adding children
     addChild(name, data, path = [])
     {
-        const parentNode = this.#getNode(path);
+        const parentNode = this.getNode(path);
         parentNode.children.set(name, new Node(name, data, parentNode));
     }
 
@@ -143,9 +147,14 @@ class NameTree
     }
 
     // Removing children
+    removeChild(name)
+    {
+        const parentNode = this.#nodePtr;
+        return parentNode.children.delete(name);
+    }
     removeChild(name, path = [])
     {
-        const parentNode = this.#getNode(path);
+        const parentNode = this.getNode(path);
         return parentNode.children.delete(name);
     }
 
@@ -158,7 +167,7 @@ class NameTree
     // Editing child data
     setData(data, path = [])
     {
-        this.#getNode(path).data = data;
+        this.getNode(path).data = data;
     }
 
     setDataAbsolute(data, path = [])
@@ -169,13 +178,18 @@ class NameTree
     // Navigate by changing the nodePtr
     moveTo(path)
     {
+        var isValidNode = this.#nodePtr;
         for(const name of path)
         {
-            this.#nodePtr = name === ".." ? this.#nodePtr.parent : this.#nodePtr.children.get(name);
+            isValidNode = name === ".." ? this.#nodePtr.parent : this.#nodePtr.children.get(name);
         }
+        //invalid nodes are null/undefined or files that can be deleted (e.g. Text files)
+        if (isValidNode === null || isValidNode === undefined || isValidNode.data.isDeletable()) return false;
+        this.#nodePtr = isValidNode;
+        return true;
     }
 
-    moveToAbsolute(path)
+    moveToAbsolute(path = [])
     {
         this.#nodePtr = this.#root;
         this.moveTo(path);
@@ -185,8 +199,8 @@ class NameTree
     // SUS ALERT: Not yet tested, may just delete the node altogether
     transferNode(path, newPath)   
     {
-        const currentNode = this.#getNode(path);
-        const newParent = this.#getNode(newPath);
+        const currentNode = this.getNode(path);
+        const newParent = this.getNode(newPath);
 
         newParent.children.set(currentNode.name, currentNode);
         currentNode.parent.children.delete(currentNode.name);
