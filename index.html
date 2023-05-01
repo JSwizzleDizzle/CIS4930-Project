@@ -13,7 +13,15 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="images/icons/titlebar/terminal-icon.png" type="image/x-icon">
+
+    <!-- jQuery stuff -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"
+    integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+    crossorigin="anonymous"></script>
+    
     <title>&gt; TERMINAL</title>
+
+    
 </head>
 <body id="body">
     <script>
@@ -69,12 +77,11 @@
         import FlappyBird from "./modules/FlappyBird.mjs";
 
         // Tree testing
-        
+        /*
         const testTree = new NameTree(new FileData("C:"), "C:");
         testTree.addChild("Program Files", new FileData("Program Files"));
         testTree.addChild("Users", new FileData("Users"));
         testTree.addChild("Windows", new FileData("Windows"));
-        
         testTree.addChild("defaultuser0", new FileData("defaultuser0"), ["Users"]);
         testTree.addChild("Mike Oxmall", new FileData("Mike Oxmall"), ["Users"]);
         testTree.moveTo(["Users"]);
@@ -87,8 +94,20 @@
         testTree.moveToAbsolute();
         console.log(testTree.getCurrentPath().join('\\') + '>');
         var testSystem = new FileSystem(testTree);
+        */
 
-        // Webpage setup
+        $(function() {
+        var testSystem = new FileSystem();
+        $.ajax({
+            url: "map1.txt",
+            dataType: "text",
+            success: function(data){
+                console.log(data);
+                testSystem.loadFromFile(data);
+            }
+        });
+    
+    // Webpage setup
         const desktop = document.getElementById("desktop");
         const game = new Desktop(desktop);
 
@@ -99,7 +118,7 @@
         game.registerWindow(terminal.getBaseWindow());
         game.registerWindow(pong.getBaseWindow());
         game.registerWindow(flappybird.getBaseWindow());
-
+    });
     </script>
 </body>
 </html>
