@@ -2,7 +2,7 @@
 import Vec2 from "./Vec2.mjs";
 import ResourceManager from "./ResourceManager.mjs";
 import BaseWindow from "./BaseWindow.mjs";
-import {FileSystem, FileData} from "./FileSystem.mjs";
+import FileSystem from "./FileSystem.mjs";
 import User from "./UserStats.mjs";
 
 
@@ -306,17 +306,18 @@ class Terminal
         else if(this.#running)
         {
             this.printLine();
-            if (!this.#fileSystem.getFileTree().getData([args]))
+            const file = this.#fileSystem.getFile(args);
+            if (!file)
             {
                 this.printLine("'" + args + "' does not exist");
             }
-            else if (!this.#fileSystem.getFileTree().getData([args]).isDeletable())
+            else if (!file.isDeletable())
             {
                 this.printLine("'" + args + "' is not deletable");
             }
             else
             {
-                this.#fileSystem.getFileTree().removeChild(args);
+                this.#fileSystem.deleteFile(args);
                 this.printLine("'" + args + "' was successfully deleted");
 
                 let chance = Math.random();
@@ -344,9 +345,9 @@ class Terminal
     {
         if(this.#running){
         this.printLine();
-        for (let [key, value] of this.#fileSystem.getFileTree().getNode().children)
+        for (const name of this.#fileSystem.getDirectoryNames())
         {
-            this.printLine(value.name);
+            this.printLine(name);
         }
         this.printLine();
         }

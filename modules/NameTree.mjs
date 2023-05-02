@@ -97,6 +97,16 @@ class NameTree
         return this.#navigateFrom(path) !== null;
     }
 
+    getChildrenNames()
+    {
+        const names = [];
+        for (let [key, value] of this.#nodePtr.children)
+        {
+            names.push(value.name);
+        }
+        return names;
+    }
+
 
     // TRAVERSAL: Returns path to nodePtr as an array of name strings
     getCurrentPath()

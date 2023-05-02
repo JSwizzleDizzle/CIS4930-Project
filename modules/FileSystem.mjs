@@ -92,6 +92,7 @@ class TextFile
     // ================ ACCESSORS ================ //
     getName() { return this.#metadata.getName(); }
     getSize() { return this.#metadata.getSize(); }
+    isDeletable() { return this.#metadata.isDeletable(); }
     getType() { return this.#type; }
     getMetadata() { return this.#metadata; }
     getContent()
@@ -228,6 +229,11 @@ class FileSystem
     }
 
 
+
+    // ================ HELPER FUNCTIONS ================ //
+
+
+
     // ================ ACCESSORS ================ //
     getDirectory(pathString)
     {
@@ -242,6 +248,11 @@ class FileSystem
         const pathList = pathString.split(FileSystem.slashes);
         const dir = this.#fileTree.getData(pathList.slice(0, -1));
         return dir ? dir.getFile(pathList.at(-1)) : null;
+    }
+
+    getDirectoryNames()
+    {
+        return this.#fileTree.getChildrenNames();
     }
 
     
