@@ -77,7 +77,18 @@ main {
     top: -1px;
     height:34px;
 }
-
+/* login styles */
+form {
+    color: white;
+}
+#instructions {
+    background-image: url("images/instructions-background-image.png")
+}
+.filler {
+    height:649px;
+    width:100%;
+}
+/* main game styles */
 #desktop {
     width: 1920px;
     height: 1080px;

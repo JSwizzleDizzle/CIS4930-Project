@@ -704,7 +704,7 @@ class Terminal
     //  ACCESSORS
     ////////////////////////////////////////////////////////////////
     getBaseWindow() { return this.#baseWindow; }
-    getRunning() { return this.#running; }
+    getUser() { return this.#user; }
 
 
     ////////////////////////////////////////////////////////////////
