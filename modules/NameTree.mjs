@@ -79,7 +79,7 @@ class NameTree
     //  ACCESSORS
     ////////////////////////////////////////////////////////////////
 
-    // Retrieve node data
+    // DATA: Retrieves node data
     getData(path = [])
     {
         const node = this.getNode(path);
@@ -88,10 +88,17 @@ class NameTree
 
     getDataAbsolute(path = [])
     {
-        return this.#getNodeAbsolute(path).data;
+        const node = this.#getNodeAbsolute(path);
+        return node ? node.data : null;
     }
 
-    // Returns path to nodePtr as an array of name strings
+    hasChild(path = [])
+    {
+        return this.#navigateFrom(path) !== null;
+    }
+
+
+    // TRAVERSAL: Returns path to nodePtr as an array of name strings
     getCurrentPath()
     {
         let currentNode = this.#nodePtr;
@@ -111,12 +118,7 @@ class NameTree
         return this.#nodePtr.parent;
     }
 
-    hasChild(path = [])
-    {
-        return this.#navigateFrom(path) !== null;
-    }
-
-
+    
 
     ////////////////////////////////////////////////////////////////
     //  MUTATORS:
@@ -124,80 +126,80 @@ class NameTree
     //  Relative works from nodePtr, absolute works from root
     ////////////////////////////////////////////////////////////////
 
-    // Adding children
+
+    // CREATION: Adds child nodes
     addChild(name, data, path = [])
-    {
-        const parentNode = this.getNode(path);
-        parentNode.children.set(name, new Node(name, data, parentNode));
-    }
-
-    addChildAbsolute(name, data, path = [])
-    {
-        const parentNode = this.#getNodeAbsolute(path);
-        parentNode.children.set(name, new Node(name, data, parentNode));
-    }
-
-    // Creation, retrieval, and deletion of saved node points
-    saveKeyNode(name)
-    {
-        const keyPtr = this.#nodePtr;
-        this.#keyNodes.set(name, keyPtr);
-    }
-
-    loadKeyNode(name)
-    {
-        this.#nodePtr = this.#keyNodes.get(name);
-    }
-
-    deleteKeyNode(name)
-    {
-        this.#keyNodes.delete(name);
-    }
-
-    // Removing children
-    removeChild(name, path = [])
     {
         const parentNode = this.getNode(path);
         if(parentNode === null)
         {
             return false;
         }
-        
-        return parentNode.children.delete(name);
+
+        parentNode.children.set(name, new Node(name, data, parentNode));
+        return true;
+    }
+
+    addChildAbsolute(name, data, path = [])
+    {
+        const parentNode = this.#getNodeAbsolute(path);
+        if(parentNode === null)
+        {
+            return false;
+        }
+
+        parentNode.children.set(name, new Node(name, data, parentNode));
+        return true;
+    }
+
+
+    // REMOVAL: deletes child nodes
+    removeChild(name, path = [])
+    {
+        const parentNode = this.getNode(path);
+        return parentNode !== null && parentNode.children.delete(name);
     }
 
     removeChildAbsolute(name, path)
     {
         const parentNode = this.#getNodeAbsolute(path);
-        return parentNode.children.delete(name);
+        return parentNode !== null && parentNode.children.delete(name);
     }
 
-    // Editing child data
+
+    // DATA: sets node data
     setData(data, path = [])
     {
+        if(this.getNode(path) === null)
+        {
+            return false;
+        }
+
         this.getNode(path).data = data;
+        return true;
     }
 
     setDataAbsolute(data, path = [])
     {
-        this.#getNodeAbsolute(path).data = data;
-    }
-
-    // Navigate by changing the nodePtr
-    moveTo(path)
-    {
-        var isValidNode = this.#nodePtr;
-        for(const name of path)
-        {
-            isValidNode = name === ".." ? this.#nodePtr.parent : this.#nodePtr.children.get(name);
-        }
-        // EDIT
-        //invalid nodes are null/undefined or files that can be deleted (e.g. Text files)
-        if (isValidNode === null || isValidNode === undefined || isValidNode.data.isDeletable())
+        if(this.#getNodeAbsolute(path) === null)
         {
             return false;
         }
-        this.#nodePtr = isValidNode;
+
+        this.#getNodeAbsolute(path).data = data;
+        return true;
+    }
+
+
+    // TRAVERSAL: Navigation of the NameTree by changing the nodePtr
+    moveTo(path)
+    {
+        const destination = this.getNode(path);
+        if (destination === null || destination === undefined)
+        {
+            return false;
+        }
+        this.#nodePtr = destination;
         return true;
     }
 
@@ -213,7 +215,8 @@ class NameTree
         return success;
     }
 
-    // Take a node and reattach it somewhere else in the tree
+
+    // STRUCTURE: Takes a node and reattach it somewhere else in the tree
     // SUS ALERT: Not yet tested, may just delete the node altogether
     transferNode(path, newPath)   
     {
@@ -231,6 +234,24 @@ class NameTree
 
         newParent.children.set(currentNode.name, currentNode);
         currentNode.parent.children.delete(currentNode.name);
+    }
+
+
+    // KEY NODES: Creation, retrieval, and deletion of saved node points
+    saveKeyNode(name)
+    {
+        const keyPtr = this.#nodePtr;
+        this.#keyNodes.set(name, keyPtr);
+    }
+
+    loadKeyNode(name)
+    {
+        this.#nodePtr = this.#keyNodes.get(name);
+    }
+
+    deleteKeyNode(name)
+    {
+        this.#keyNodes.delete(name);
     }
 
 
