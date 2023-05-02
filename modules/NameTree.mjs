@@ -62,7 +62,7 @@ class NameTree
     }
 
     // Specific case of navigate: from nodePtr
-    getNode(path = [])
+    #getNode(path = [])
     {
         return this.#navigateFrom(this.#nodePtr, path);
     }
@@ -82,7 +82,7 @@ class NameTree
     // DATA: Retrieves node data
     getData(path = [])
     {
-        const node = this.getNode(path);
+        const node = this.#getNode(path);
         return node ? node.data : null;
     }
 
@@ -130,7 +130,7 @@ class NameTree
     // CREATION: Adds child nodes
     addChild(name, data, path = [])
     {
-        const parentNode = this.getNode(path);
+        const parentNode = this.#getNode(path);
         if(parentNode === null)
         {
             return false;
@@ -156,7 +156,7 @@ class NameTree
     // REMOVAL: deletes child nodes
     removeChild(name, path = [])
     {
-        const parentNode = this.getNode(path);
+        const parentNode = this.#getNode(path);
         return parentNode !== null && parentNode.children.delete(name);
     }
 
@@ -170,12 +170,12 @@ class NameTree
     // DATA: sets node data
     setData(data, path = [])
     {
-        if(this.getNode(path) === null)
+        if(this.#getNode(path) === null)
         {
             return false;
         }
 
-        this.getNode(path).data = data;
+        this.#getNode(path).data = data;
         return true;
     }
 
@@ -194,7 +194,7 @@ class NameTree
     // TRAVERSAL: Navigation of the NameTree by changing the nodePtr
     moveTo(path)
     {
-        const destination = this.getNode(path);
+        const destination = this.#getNode(path);
         if (destination === null || destination === undefined)
         {
             return false;
@@ -220,8 +220,8 @@ class NameTree
     // SUS ALERT: Not yet tested, may just delete the node altogether
     transferNode(path, newPath)   
     {
-        const currentNode = this.getNode(path);
-        const newParent = this.getNode(newPath);
+        const currentNode = this.#getNode(path);
+        const newParent = this.#getNode(newPath);
 
         newParent.children.set(currentNode.name, currentNode);
         currentNode.parent.children.delete(currentNode.name);

@@ -212,7 +212,7 @@ class FileFolder
 * Directory NameTree nodes are directories which hold FileFolders as data and other directories as children
 * The top directory is called "ROOT", which houses entire drives as its direct children
 */
-export class FileSystem
+class FileSystem
 {
     // Regex for separating directory names
     static slashes = /\\|\//;
@@ -408,4 +408,4 @@ export class FileSystem
 
 
 
-// export default FileSystem;
+export default FileSystem;
