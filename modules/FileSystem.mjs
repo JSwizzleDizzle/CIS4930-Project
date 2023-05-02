@@ -134,10 +134,10 @@ class FileFolder
     #isDrive;
     #files;
 
-    constructor(name, files = [])
+    constructor(name, files = [], deletable = true)
     {
         this.#isDrive = Directory.driveRegex.test(this.getName());
-        this.#metadata = new FileMetadata(name, !this.#isDrive, Date.now());
+        this.#metadata = new FileMetadata(name, !this.#isDrive && deletable, Date.now());
         this.#files = new Map();
         this.addFiles(files);
     }
@@ -191,6 +191,7 @@ class FileFolder
 
         this.#metadata.incrementSize(-file.getSize());
         this.#files.delete(file.getName());
+        return true;
     }
 
     removeFiles(fileNames)
@@ -213,60 +214,110 @@ class FileFolder
 */
 export class FileSystem
 {
+    // Regex for separating directory names
+    static slashes = /\\|\//;
+    // Regex for invalid name characters
+    static invalidChars = /[<>:"/\\|?*]/;
+    
+
     #fileTree;
 
-    constructor(tree = null)
+    constructor()
     {
         this.#fileTree = new NameTree(new FileFolder("ROOT"));
     }
 
 
     // ================ ACCESSORS ================ //
-    getFile()
+    getDirectory(pathString)
     {
-
+        // Split by '/' or by '\'
+        const pathList = pathString.split(FileSystem.slashes);
+        return this.#fileTree.getData(pathList);
     }
 
-    getDirectory()
+    getFile(pathString)
     {
-
+        // Split by '/' or by '\'
+        const pathList = pathString.split(FileSystem.slashes);
+        const dir = this.#fileTree.getData(pathList.slice(0, -1));
+        return dir ? dir.getFile(pathList.at(-1)) : null;
     }
 
-    getPath()
+    
+
+    getPathString()
     {
-        
+        // Remove "ROOT" and join with '\'
+        return this.#fileTree.getCurrentPath().slice(1, -1).join('\\') + '>';
     }
 
 
 
     // ================ MUTATORS ================ //
-    setLocation(path)
+    setLocation(pathString)
     {
-
+        return this.#fileTree.moveTo(pathString.split(FileSystem.slashes));
     }
 
-    setLocationAbsolute(path)
+    setLocationAbsolute(pathString)
     {
-
+        return this.#fileTree.moveToAbsolute(pathString.split(FileSystem.slashes));
     }
 
 
-    addDirectory()
+    addDirectory(dirName, deletable)
     {
+        const nameList = dirName.split(FileSystem.slashes);
 
+        // Check for invalid chars
+        for(const name of nameList)
+        {
+            if(name.match(FileSystem.invalidChars))
+            {
+                return false;
+            }
+        }
+
+        // Add files along the directory list
+        for(const name of nameList)
+        {
+            // Check if file exists, create it if it doesn't
+            if(this.#fileTree.moveTo([name]))
+            {
+                continue;
+            }
+            else
+            {
+                this.#fileTree.addChild(name, new FileFolder(name, [], deletable));
+                this.#fileTree.moveTo([name]);
+            }
+        }
+        
+        // Move pointer to start
+        const backtrack = new Array(nameList.length);
+        backtrack.fill("..");
+        this.#fileTree.moveTo(backtrack);
+
+        return true;
     }
 
-    addDirectories()
+    addDirectories(dirNames, deletable)
     {
-
+        let success = true;
+        for(const name of dirNames)
+        {
+            success = success && this.addDirectory(name, deletable);
+        }
+        return success;
     }
 
-    addFile()
+    addFile(name, deletable = true, content = "", overwrite = false)
     {
-
+        return this.#fileTree.getData().addFile(new TextFile(name, content, deletable), overwrite);
     }
 
-    addFiles()
+    addFiles(files)
     {
 
     }
@@ -274,25 +325,39 @@ export class FileSystem
 
     deleteDirectory(dirName)
     {
-
+        const nameList = dirName.split(FileSystem.slashes);
+        const path = nameList.slice(0, -1);
+        return this.#fileTree.hasChild(path) && this.#fileTree.removeChild(nameList.at(-1), path);
     }
 
     deleteDirectories(dirNames)
     {
-
+        let success = true;
+        for(const name of dirNames)
+        {
+            success = success && this.deleteDirectory(name);
+        }
+        return success;
     }
 
-    deleteFile(fileName)
+    deleteFile(filePath)
     {
-
+        const nameList = filePath.split(FileSystem.slashes);
+        return removeChild(nameList.at(-1), nameList.split(0, -1));
     }
 
-    deleteFiles(fileNames)
+    deleteFiles(filePaths)
     {
-
+        let success = true;
+        for(const path of filePaths)
+        {
+            success = success && this.deleteFile(path);
+        }
+        return success;
     }
 
-
+    // Probably won't need this
+    /*
     moveDirectory(path)
     {
 
@@ -332,7 +397,7 @@ export class FileSystem
     {
 
     }
-
+    */
 
     buildFromFile(file)
     {

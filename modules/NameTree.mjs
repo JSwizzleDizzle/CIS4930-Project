@@ -50,7 +50,7 @@ class NameTree
     //  HELPER METHODS
     ////////////////////////////////////////////////////////////////
 
-    // Moves from one tree location to another via a name path, returns false if the path is not found
+    // Moves from one tree location to another via a name path, returns null if the path is not found
     #navigateFrom(currentNode, path)
     {
         let travelNode = currentNode;
@@ -58,7 +58,7 @@ class NameTree
         {
             travelNode = name === ".." ? travelNode.parent : travelNode.children.get(name);
         }
-        return travelNode === undefined ? false : travelNode;
+        return travelNode === undefined ? null : travelNode;
     }
 
     // Specific case of navigate: from nodePtr
@@ -82,7 +82,8 @@ class NameTree
     // Retrieve node data
     getData(path = [])
     {
-        return this.getNode(path).data;
+        const node = this.getNode(path);
+        return node ? node.data : null;
     }
 
     getDataAbsolute(path = [])
@@ -109,6 +110,13 @@ class NameTree
         this.#nodePtr = this.#nodePtr.parent;
         return this.#nodePtr.parent;
     }
+
+    hasChild(path = [])
+    {
+        return this.#navigateFrom(path) !== null;
+    }
+
+
 
     ////////////////////////////////////////////////////////////////
     //  MUTATORS:
@@ -147,14 +155,14 @@ class NameTree
     }
 
     // Removing children
-    removeChild(name)
-    {
-        const parentNode = this.#nodePtr;
-        return parentNode.children.delete(name);
-    }
     removeChild(name, path = [])
     {
         const parentNode = this.getNode(path);
+        if(parentNode === null)
+        {
+            return false;
+        }
+        
         return parentNode.children.delete(name);
     }
 
@@ -183,16 +191,26 @@ class NameTree
         {
             isValidNode = name === ".." ? this.#nodePtr.parent : this.#nodePtr.children.get(name);
         }
+        // EDIT
         //invalid nodes are null/undefined or files that can be deleted (e.g. Text files)
-        if (isValidNode === null || isValidNode === undefined || isValidNode.data.isDeletable()) return false;
+        if (isValidNode === null || isValidNode === undefined || isValidNode.data.isDeletable())
+        {
+            return false;
+        }
         this.#nodePtr = isValidNode;
         return true;
     }
 
     moveToAbsolute(path = [])
     {
+        const save = this.#nodePtr;
         this.#nodePtr = this.#root;
-        this.moveTo(path);
+        const success = this.moveTo(path);
+        if(!success)
+        {
+            this.#nodePtr = save;
+        }
+        return success;
     }
 
     // Take a node and reattach it somewhere else in the tree
