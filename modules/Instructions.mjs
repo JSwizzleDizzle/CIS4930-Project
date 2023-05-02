@@ -11,7 +11,7 @@ class Instructions
     #eInstructions;
     #eBlock;
 
-    constructor(parent, id, title = "instructions.txt", icon="instructions",position = new Vec2(450, 320), size = new Vec2(932, 649))
+    constructor(parent, id, title = "instructions.txt", icon="instructions",position = new Vec2(700, 400), size = new Vec2(932, 649))
     {
         this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
         this.#initialize();
