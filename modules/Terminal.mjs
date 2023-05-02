@@ -34,6 +34,12 @@ class Terminal
     #user;
     #enemy;
 
+    #loggingIn;
+    #needsUsername;
+    #needsPassword;
+    #username;
+    #password;
+
     // HTML Elements
     #eWindow;
     #eTerminal;
@@ -64,12 +70,15 @@ class Terminal
         ["tree", "cmdTree"], 
         ["terminal.exe", "cmdTerminalExe"],
         ["ls", "cmdDirectory"],
-        ["enter", "cmdStart"],
-        ["ENTER", "cmdStart"],
+        ["enter", "cmdFreePlay"],
+        ["ENTER", "cmdFreePlay"],
+        ["login", "cmdLogin"],
+        ["LOGIN", "cmdLogin"],
         ["att", "cmdAttack"],
         ["inv", "cmdInventory"],
         ["inventory", "cmdInventory"],
-        ["use", "cmdUseItem"]
+        ["use", "cmdUseItem"],
+        ["test", "test"]
     ]);
 
     constructor(parent, id, filesys = new FileSystem(), directory = `C:\\>`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
@@ -83,11 +92,17 @@ class Terminal
         this.#entryPtr = 0;
         this.#awaitingCommand = false;
         this.#running = false;
+        this.#loggingIn = false;
+        this.#needsUsername = true;
+        this.#needsPassword = true;
         this.#fileSystem = filesys;
         this.#enCounter = 0;
         this.#bossCounter = 2;
         this.#fighting = false;
         this.#user = new User("Guest",20,20*Math.random(),Math.random(),Math.random());
+
+        this.#username = "";
+        this.#password = "";
 
         this.#initialize();
     }
@@ -159,7 +174,8 @@ class Terminal
                 case 13:
                     // Newline ('\n')
                     event.preventDefault();
-                    this.submitEntry();
+                    this.#loggingIn ? this.submitLogin() : this.submitEntry();
+
                     break;
 
                 case 38:
@@ -478,12 +494,45 @@ class Terminal
         this.awaitCommand();
     }
 
-    cmdStart(args)
+    cmdLogin(args)
+    {  
+        if( !this.#running ){
+
+            this.#awaitingCommand = true;
+            this.#loggingIn = true;
+            if( this.#username === "")
+            {
+                this.printLine("Login as: ");
+                this.enableInput();
+                this.#eActiveEntry.setAttribute("id", "username");
+            }   
+            else
+            {
+                this.printLine("Password: ");
+                this.enableInput();
+                this.#eActiveEntry.setAttribute("id", "password");
+            }
+            
+           // document.documentElement.requestFullscreen();
+        }else{ 
+
+            this.#cmdError();
+        }
+            
+    }
+    cmdFreePlay(args)
     {
-        this.printFile("resources/instructions.txt");
-        this.#running = true;
-        this.awaitCommand();
-        document.documentElement.requestFullscreen();
+        if( !this.#running ){
+
+            this.printFile("resources/instructions.txt");
+            this.#running = true;
+            this.awaitCommand();
+            document.documentElement.requestFullscreen();
+        }else{ 
+
+            this.#cmdError();
+        }
+
     }
 
 
@@ -590,12 +639,54 @@ class Terminal
     ////////////////////////////////////////////////////////////////
     //  BEHAVIORS
     ////////////////////////////////////////////////////////////////
+    submitLogin()
+    {
+        this.disableInput();
+        this.#eActiveEntry.textContent = this.#eActiveEntry.textContent.replace('\n', '');
+        this.#currentEntry = this.#eActiveEntry.textContent;
+        if( this.#needsUsername )
+        {   
+            this.#needsUsername = false;
+            this.#username = this.#currentEntry;
+            this.cmdLogin();
+            return;
+        }
+        if( this.#needsPassword )
+        {   
+            this.#needsPassword = false;
+            this.#password = this.#currentEntry;
+            // https://stackoverflow.com/questions/20314978/execute-php-file-with-javascript-function
+            // username and password are inputted
+            // run login.php
+            $.ajax({
+                type: "POST",
+                url: "./actions/login.php" ,
+                data: { 
+                    username: this.#username,
+                    password: this.#password
+                },
+                success : function() { 
+
+                    // here is the code that will run on client side after running login.php on server
+                    this.#loggingIn = false;
+
+                    // function below reloads current page
+                    // location.reload();
+
+                }
+            });
+            
+            return;
+        }
+    }
+
     // Command handling methods
     submitEntry()
     {
         this.disableInput();
         this.#eActiveEntry.textContent = this.#eActiveEntry.textContent.replace('\n', '');
         this.#currentEntry = this.#eActiveEntry.textContent;
+       
         if(this.#currentEntry !== '')
         {
             this.#entryHistory.push(this.#currentEntry);
@@ -603,6 +694,8 @@ class Terminal
         
         this.executeCommand(this.#currentEntry);
     }
+
+
 
     executeCommand(command)
     {
@@ -693,18 +786,33 @@ class Terminal
         }                
     }
     
+    // creates a button that loads the desired profile when clicked.
+    printProfile(text, onclickFunction)
+    {
+        this.#eCurrentLine = document.createElement("BUTTON");
+        this.#eCurrentLine.textContent = text;
+        this.#eCurrentLine.setAttribute("onClick", onclickFunction);
+        this.#eTextbox.appendChild(this.#eCurrentLine);
+    }
+    
     errorString(input)
     {
         return `'${input}' is not recognized as an internal or external command,\noperable program or batch file.`;
     }
 
 
-
+    test()
+    {
+        this.printLine(this.#username);
+        this.printLine(this.#password);
+    }
     ////////////////////////////////////////////////////////////////
     //  ACCESSORS
     ////////////////////////////////////////////////////////////////
     getBaseWindow() { return this.#baseWindow; }
     getRunning() { return this.#running; }
+    getUsername() { return this.#username; }
+    getPassword() { return this.#password; }
 
 
     ////////////////////////////////////////////////////////////////
