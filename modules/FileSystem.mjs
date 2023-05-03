@@ -431,6 +431,63 @@ class FileSystem
 
     }
     */
+   
+    mapToText()
+    {
+        var root = this.#fileTree.getRootNode();
+        var s = "d," + root.name + "\n"; // root node
+        let currentNodes = [];
+        let nextNodes = [];
+        
+        root.children.forEach((val) => {
+            currentNodes.push(val);
+        });
+
+        while (currentNodes.length > 0)
+        {
+            currentNodes.forEach((val) => {
+                if (val.data instanceof FileFolder)
+                {
+                    s += "d," + val.name;
+                }
+                else if (val.data instanceof TextFile)
+                {
+                    if (val.data.isLocked())
+                    {
+                        s += "lf,";
+                    }
+                    else
+                    {
+                        s += "f,";
+                    }
+                    s += val.name + "," + val.getContent();
+                }
+                let currentNode = val;
+                let path = [];
+                while(currentNode.parent)
+                {
+                    currentNode = currentNode.parent;
+                    path.push(currentNode.name);
+                }
+                path = path.reverse().slice(1);
+                path.forEach((p) => {
+                    s += "," + p;
+                });
+                s += "\n";
+            });
+
+            for(const node of currentNodes)
+            {
+                node.children.forEach((val) => {
+                    nextNodes.push(val);
+                });
+            }
+            currentNodes = nextNodes;
+            nextNodes = [];
+        }
+        
+        return s;
+    }
 
     // Generates a file tree from a text  file in the specified format
     loadFromFile(s)
