@@ -47,7 +47,6 @@ class Desktop
             for(const win of this.#eChildWindows)
             {
                 win.setSizeRatio(this.#sizeRatio);
-                //win.setSize(win.getSizeNormalized())
                 win.containWithin(this.#windowRect);
                 
             }
@@ -64,6 +63,23 @@ class Desktop
         this.#eWindow.addEventListener("mousedown", event => {
             this.#mousePosLast = new Vec2(event.clientX, event.clientY);
             this.#mouseDown = true;
+
+            for(const win of this.#eChildWindows)
+            {
+                if(win.isDraggable())
+                {
+                    for(const winZ of this.#eChildWindows)
+                    {
+                        if(winZ.getZIndex() > win.getZIndex())
+                        {
+                            winZ.addZIndex(-1);
+                        }
+                    }
+                    win.setZIndex(this.#eChildWindows.length - 1);
+                    event.stopPropagation();
+                }
+                console.log(win.getZIndex());
+            }
         });
 
         this.#eWindow.addEventListener("mouseup", event => {

@@ -78,36 +78,6 @@
         import FlappyBird from "./modules/FlappyBird.mjs";
         import ResourceManager from "./modules/ResourceManager.mjs"
 
-        // Tree testing
-        /*
-        const testTree = new NameTree(new FileData("C:"), "C:");
-        testTree.addChild("Program Files", new FileData("Program Files"));
-        testTree.addChild("Users", new FileData("Users"));
-        testTree.addChild("Windows", new FileData("Windows"));
-        testTree.addChild("defaultuser0", new FileData("defaultuser0"), ["Users"]);
-        testTree.addChild("Mike Oxmall", new FileData("Mike Oxmall"), ["Users"]);
-        testTree.moveTo(["Users"]);
-        testTree.addChild("Mike Oxbig", new FileData("Mike Oxbig"));
-        testTree.moveTo(["Mike Oxbig"]);
-        testTree.addChild("Photos", new FileData("Photos"));
-        testTree.addChildAbsolute("System32", new FileData("System32"), ["Windows"]);
-        testTree.printLevels();
-        testTree.moveTo(["Photos"]);
-        testTree.moveToAbsolute();
-        console.log(testTree.getCurrentPath().join('\\') + '>');
-        var testSystem = new FileSystem(testTree);
-
-        $.ajax({
-            url: "map1.txt",
-            dataType: "text",
-            success: function(data){
-                console.log(data);
-                testSystem.loadFromFile(data);
-            }
-        });
-        */
-
-
         $(function() {
 
         const fileText = ResourceManager.readFile("map1.txt");
@@ -121,12 +91,12 @@
         const desktop = new Desktop(eDesktop);
 
         const terminal = new Terminal(eDesktop, 0, testSystem);
-        //const pong = new Pong(desktop, 1);
-        //const flappybird = new FlappyBird(desktop, 2);
+        const pong = new Pong(eDesktop, 1);
+        const flappybird = new FlappyBird(eDesktop, 2);
 
         desktop.registerWindow(terminal.getBaseWindow());
-        //desktop.registerWindow(pong.getBaseWindow());
-        //desktop.registerWindow(flappybird.getBaseWindow());
+        desktop.registerWindow(pong.getBaseWindow());
+        desktop.registerWindow(flappybird.getBaseWindow());
     });
     </script>
 </body>

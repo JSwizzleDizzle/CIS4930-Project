@@ -20,6 +20,7 @@ class BaseWindow
     #sizeNormalized;
     #sizeRatio;
     #position;
+    #zIndex;
     #parent;
     #title;
     #style;
@@ -48,6 +49,7 @@ class BaseWindow
         this.#title = title;
         this.#style = style;
         this.#position = position;
+        this.#zIndex = id;
         this.#size = size;
         this.#sizeNormalized = size;
         this.#sizeRatio = 1.0;
@@ -221,6 +223,7 @@ class BaseWindow
     ////////////////////////////////////////////////////////////////
     getID() { return this.#ID; }
     getPos() { return this.#position; }
+    getZIndex() { return this.#zIndex; }
     getBoundingRect() { return this.#eWindow.getBoundingClientRect(); }
     getSize() { return this.#size; }
     getSizeNormalized() { return this.#sizeNormalized; }
@@ -261,6 +264,18 @@ class BaseWindow
         const currentPos = this.#position.addR(position);
         this.#eWindow.style.left = `${currentPos.x}px`;
         this.#eWindow.style.top = `${currentPos.y}px`;
+    }
+
+    setZIndex(z)
+    {
+        this.#zIndex = z;
+        this.#eWindow.style.zIndex = this.#zIndex;
+    }
+
+    addZIndex(z)
+    {
+        this.#zIndex += z;
+        this.#eWindow.style.zIndex = this.#zIndex;
     }
 
     // Sets the "stable" size
