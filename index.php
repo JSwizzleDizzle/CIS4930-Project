@@ -46,9 +46,9 @@
         $inputtedProfile = $_POST['profile'];
 
         //Database connection
-        $conn = new mysqli("mysql.cise.ufl.edu", "elewinkoh", "mysqlpassw0rd", "Terminal_Illness");
+        $config = parse_ini_file("dbconfig.ini");
+        $conn = new mysqli($config["host"], $config["user"], $config["pass"], $config["dbname"]);
         if( $conn->connect_error ){ die("Connection failed: " . $conn->connect_error);}
-
 
 
         ////////////////////////////////////////////////////////////////
