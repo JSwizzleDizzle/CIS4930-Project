@@ -53,7 +53,7 @@
 
     <main>
         <article id="desktop">  
-            <img src="images/xp-desktop.jpeg" alt="Windows XP Background">
+            <img src="images/xp-desktop.jpeg" alt="Windows XP Background" id="desktop-background" draggable="false">
             
             <div id="datetime">
                 <div id="taskbar"></div>
@@ -80,23 +80,25 @@
 
         $(function() {
 
-        const fileText = ResourceManager.readFile("map1.txt");
         const testSystem = new FileSystem();
-        testSystem.loadFromFile(fileText);
+        testSystem.loadFromFile(ResourceManager.readFile("map1.txt"));
 
         
     
     // Webpage setup
         const eDesktop = document.getElementById("desktop");
+        eDesktop.g
         const desktop = new Desktop(eDesktop);
 
         const terminal = new Terminal(eDesktop, 0, testSystem);
-        const pong = new Pong(eDesktop, 1);
-        const flappybird = new FlappyBird(eDesktop, 2);
+        const testWindow = new BaseWindow(eDesktop, 3);
+        //const pong = new Pong(eDesktop, 1);
+        //const flappybird = new FlappyBird(eDesktop, 2);
 
         desktop.registerWindow(terminal.getBaseWindow());
-        desktop.registerWindow(pong.getBaseWindow());
-        desktop.registerWindow(flappybird.getBaseWindow());
+        desktop.registerWindow(testWindow);
+        //desktop.registerWindow(pong.getBaseWindow());
+        //desktop.registerWindow(flappybird.getBaseWindow());
     });
     </script>
 </body>

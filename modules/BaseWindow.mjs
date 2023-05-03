@@ -3,6 +3,36 @@ import Vec2 from "./Vec2.mjs";
 
 
 
+class ResizeFlags
+{
+    // Flags for each side of the window
+    left;
+    right;
+    up;
+    down;
+
+    constructor()
+    {
+        this.setFalse();
+    }
+
+
+    // Accessors
+    setFalse()
+    {
+        this.left = false;
+        this.right = false;
+        this.up = false;
+        this.down = false;
+    }
+
+    x() { return this.left || this.right; }
+    y() { return this.up || this.down; }
+    any() { return this.x() || this.y(); }
+}
+
+
+
 /*
 * TERMINAL WINDOW:
 * Encapsulates game user input window
@@ -26,6 +56,8 @@ class BaseWindow
     #style;
 
     #draggable;
+    
+    #resizeFlags;
     #fullscreen;
     #minimized;
     #hidden;
@@ -53,6 +85,7 @@ class BaseWindow
         this.#size = size;
         this.#sizeNormalized = size;
         this.#sizeRatio = 1.0;
+        this.#resizeFlags = new ResizeFlags();
         
         this.#draggable = false;
         this.#fullscreen = false;
@@ -123,6 +156,7 @@ class BaseWindow
     #setupEventListeners()
     {
         this.#eTitleBar.addEventListener("mousedown", () => {
+            
             this.#draggable = !this.#fullscreen;
         });
 
@@ -145,6 +179,7 @@ class BaseWindow
 
         document.addEventListener("mouseup", () => {
             this.#draggable = false;
+            this.#resizeability.setFalse();
         });
     }
 
@@ -160,16 +195,20 @@ class BaseWindow
         if(this.#fullscreen)
         {
             this.#eMaximize.innerHTML = `<img src="images/icons/titlebar/unmaximize.png" alt="unmax">`;
-            this.#eWindow.style.left = "0px";
-            this.#eWindow.style.top = "0px";
-            this.#eWindow.style.width = "calc(100% - 2px)";
-            this.#eWindow.style.height = "calc(100% - 2px)";
+            const rect = this.#parent.getBoundingClientRect();
+            this.#eWindow.style.left = `${rect.x}px`;
+            this.#eWindow.style.top = `${rect.y}px`;
+            this.#eWindow.style.width = `${rect.width}px`;
+            this.#eWindow.style.height = `${rect.height}px`;
+            console.log(this.#eWindow.style.width, this.#eWindow.style.height);
+            console.log(rect.width, rect.height);
+            console.log(rect);
         }
         else
         {
             this.#eMaximize.innerHTML = `<img src="images/icons/titlebar/maximize.png" alt="max">`;
             this.setPos(this.#position);
-            this.setSize(this.#size);
+            this.setSize(this.#sizeNormalized);
         }
     }
 
@@ -222,11 +261,14 @@ class BaseWindow
     //  ACCESSORS
     ////////////////////////////////////////////////////////////////
     getID() { return this.#ID; }
+
     getPos() { return this.#position; }
     getZIndex() { return this.#zIndex; }
+
     getBoundingRect() { return this.#eWindow.getBoundingClientRect(); }
     getSize() { return this.#size; }
     getSizeNormalized() { return this.#sizeNormalized; }
+
     getWindowElements()
     {
         return {
@@ -240,11 +282,22 @@ class BaseWindow
         };
     }
 
-    isFullScreen() { return this.#fullscreen; };
+    isFullScreen() { return this.#fullscreen; }
     isMinimized() { return this.#minimized; }
-    isDraggable() { return this.#draggable; }
     isHidden() { return this.#hidden; }
 
+    isDraggable() { return this.#draggable; }
+    isResizable(side = "any")
+    {
+        if(side === "any")
+            return this.#resizeability.any();
+        if(side === "x")
+            return this.#resizeability.x();
+        if(side === "y")
+            return this.#resizeability.y();
+        return this.#resizeability[side];
+    }
+    
 
 
     ////////////////////////////////////////////////////////////////
@@ -266,6 +319,8 @@ class BaseWindow
         this.#eWindow.style.top = `${currentPos.y}px`;
     }
 
+
+    // Changes the z-index (depth) of the window
     setZIndex(z)
     {
         this.#zIndex = z;
@@ -278,6 +333,7 @@ class BaseWindow
         this.#eWindow.style.zIndex = this.#zIndex;
     }
 
+
     // Sets the "stable" size
     setSize(size)
     {
@@ -285,12 +341,6 @@ class BaseWindow
         this.#size = this.#sizeNormalized.mulR(this.#sizeRatio);
         this.#eWindow.style.width = `${this.#size.x}px`;
         this.#eWindow.style.height = `${this.#size.y}px`;
-    }
-
-    setBoundingBoxSize(size)
-    {
-        this.#sizeNormalized = size;
-        this.#size = this.#sizeNormalized.mulR(this.#sizeRatio);
     }
 
     // Sets size while resizing
@@ -308,6 +358,19 @@ class BaseWindow
         this.setSize(this.getSizeNormalized());
         //this.#eWindow.style.transform = `scale(${ratio})`;
     }
+
+
+    // Sets resizability flags (cannot be resized while fullscreen)
+    setResizable(side, val)
+    {
+        if(val === "reset")
+            this.#resizeability.setFalse();
+        else
+            this.#resizeability[side] = val && !this.#fullscreen;
+    }
+
+    setDraggable(val) { this.#draggable = val && !this.#fullscreen; }
+
 
     // Hides window
     setHidden(hide)
