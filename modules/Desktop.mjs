@@ -178,6 +178,7 @@ class Desktop
         if(this.#childWindows.has(window.getID()))
             return false;
 
+        window.setZIndex(this.#childWindows.size);
         this.#childWindows.set(window.getID(), window);
         return true;
     }
@@ -196,7 +197,7 @@ class Desktop
                 win.addZIndex(-1);
             }
         }
-        window.setZIndex(this.#childWindows.length - 1);
+        window.setZIndex(this.#childWindows.size - 1);
     }
 
     setWindowResizeFlags(window, mouseX, mouseY)
