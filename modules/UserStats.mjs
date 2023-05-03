@@ -66,10 +66,9 @@ class Inventory
                 this.inventory.items.set("heal", this.inventory.items.get("heal") + 1);
                 return true;
             }
-
             else if (type == "key")
             {
-                this.inventory.items.set("key", this.inventory.items.get("keys") + 1);
+                this.inventory.items.set("key", this.inventory.items.get("key") + 1);
                 return true;
             }
             else{
@@ -159,6 +158,16 @@ exp(){
     this.str += this.enemyStr;
     this.eva += this.enemyStr;
 
+}
+heal(){
+    let healamt = this.hp / 5.0
+    this.currentHp += healamt;
+    if (this.currentHp > this.hp)
+    {
+        let healamt = this.currentHp - this.hp;
+        this.currentHp = this.hp;
+    }
+    return healamt;
 }
 }
 

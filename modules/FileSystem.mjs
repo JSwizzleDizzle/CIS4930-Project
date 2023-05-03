@@ -77,14 +77,16 @@ class TextFile
 {
     #metadata;
     #content;
-    #type;
+    #locked;
 
-    constructor(name, content = "", deletable = true, date = Date.now())
+    constructor(name, content, deletable = true, lock = false, date = Date.now())
+
     {
         this.#content = content;
         this.#metadata = new FileMetadata(name, deletable, date);
         this.#metadata.setSize(content.length);
         this.#type = name.slice(name.lastIndexOf('.')).toLowerCase();
+        this.#locked = lock;
     }
 
 
@@ -93,6 +95,7 @@ class TextFile
     getName() { return this.#metadata.getName(); }
     getSize() { return this.#metadata.getSize(); }
     isDeletable() { return this.#metadata.isDeletable(); }
+    isLocked() { return this.#locked; }
     getType() { return this.#type; }
     getMetadata() { return this.#metadata; }
     getContent()
@@ -171,7 +174,7 @@ class FileFolder
 
     // ================ MUTATORS ================ //
     // CREATION: Adds file(s) by a name and optional content/deletability, returns false if the file already exists
-    addFile(fileName, content = "", overwrite = false)
+    addFile(fileName, content = "", overwrite = false, deletable = false, locked = false)
     {
         if(this.#files.has(fileName) && !overwrite)
             return false;
@@ -437,6 +440,10 @@ class FileSystem
             else if (line[0] === 'f')
             {
                 tree.getDataAbsolute(line.slice(3)).addFile(line[1], line[2]);
+            }
+            else if (line[0] === 'lf')
+            {
+                tree.getDataAbsolute(line.slice(3)).addFile(line[1], line[2], false, true, true);
             }
         }
         this.#fileTree = tree;
