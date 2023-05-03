@@ -168,7 +168,13 @@ class FileFolder
 
     getFileNames()
     {
-        return this.#files.keys();
+        const keys = this.#files.keys();
+        const names = [];
+        for(const child of keys)
+        {
+            names.push(child);
+        }
+        return names;
     }
 
 
@@ -262,8 +268,14 @@ class FileSystem
     }
 
     // Get the directory or file names of the current directory
-    getDirectoryNames() { return this.#fileTree.getChildrenNames(); }
-    getFileNames() { return this.#fileTree.getData().getFileNames(); }
+    getDirectoryNames()
+    {
+        return this.#fileTree.getChildrenNames();
+    }
+    getFileNames()
+    {
+        return this.#fileTree.getData().getFileNames();
+    }
 
     // Gets current directory string
     getPathString()

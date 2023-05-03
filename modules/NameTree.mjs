@@ -104,7 +104,13 @@ class NameTree
 
     getChildrenNames()
     {
-        return this.#nodePtr.children.keys();
+        const keys = this.#nodePtr.children.keys();
+        const children = [];
+        for(const child of keys)
+        {
+            children.push(child);
+        }
+        return children;
     }
 
 
