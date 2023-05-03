@@ -208,7 +208,22 @@ class Terminal
         }
         else if(this.#running){
             this.printLine();
-            this.#fileSystem.getFileTree().moveTo([args]) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
+            if( this.#fileSystem.getFileTree().moveTo([args]) ){
+                this.#directory = args;
+                $.ajax({
+                    url: "../updates/Directory.php",
+                    type: "POST",
+                    data: {arg: args},
+                    success: function() {
+                      console.log(response); // This will display the response from the PHP file
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
+            }else{
+                this.printFile("resources/cmd-cd-error.txt");
+            }
             //Encounter chance
             this.#enCounter += Math.random();
         }

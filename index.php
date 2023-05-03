@@ -112,7 +112,7 @@
                 $defense = 0.5;
                 $evasion = 0.5;
                 $map = "map1.txt";
-                $directory = "C:\\>";
+                $directory = "C:";
                 $healqty = 0;
                 $keyqty = 0;
 
@@ -136,7 +136,7 @@
             } 
             
             // profile must be in DB, so fetch its contents
-            $profiles = "SELECT * FROM Profiles WHERE Name='$inputtedProfile'";
+            $profiles = "SELECT * FROM Profiles WHERE Name='$inputtedProfile' AND Username='$inputtedUsername'"; // fix for sql injection
             $result = $conn->query($profiles);
             while( $row = mysqli_fetch_array($result,  MYSQLI_ASSOC) ){
                 
@@ -152,6 +152,9 @@
                 $keyqty = $row['Key_quantity'];
             }
 
+            // create cookies for profile and username
+            setcookie("username", $inputtedUsername, time() + 86400); // Expires in 1 day
+            setcookie("profile", $profileName, time() + 86400); // Expires in 1 day
             $conn->close();
         }
         
@@ -245,8 +248,6 @@
                 const game = new Desktop(desktop);
 
                 const terminal = new Terminal(desktop, 0, testSystem, '$directory');
-                //const terminal = new Terminal(desktop, 0, testSystem);
-
                 // set user stats and inventory
                 terminal.getUser.currentHp = $currentHealth;
                 terminal.getUser.hp = $maxHealth;
