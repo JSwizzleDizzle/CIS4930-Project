@@ -17,6 +17,8 @@ class BaseWindow
     // Properties
     #ID;
     #size;
+    #sizeNormalized;
+    #sizeRatio;
     #position;
     #parent;
     #title;
@@ -38,7 +40,7 @@ class BaseWindow
     #eTaskbar;
 
 
-
+    
     constructor(parent, id, title = "Default Window", style = "default", position = new Vec2(1560, 320), size = new Vec2(384, 256))
     {
         this.#parent = parent;
@@ -47,6 +49,8 @@ class BaseWindow
         this.#style = style;
         this.#position = position;
         this.#size = size;
+        this.#sizeNormalized = size;
+        this.#sizeRatio = 1.0;
         
         this.#draggable = false;
         this.#fullscreen = false;
@@ -97,12 +101,10 @@ class BaseWindow
         this.#eTitleBar.appendChild(this.#eClose);
         // Main window area
         this.#eContent = document.createElement("section");
-        this.#eContent.setAttribute("class", this.#style);
+        this.#eContent.setAttribute("class", `${this.#style}-content`);
         //taskbar
         this.#eTaskbar = document.createElement("div");
     
-        
-
         
         // Assemble the whole window
         this.#eWindow = document.createElement("article");
@@ -183,7 +185,7 @@ class BaseWindow
         }
     }
 
-    // Returns true if the windows is protruding outise an arbitrary outer box
+    // Returns true if the windows is protruding outide an arbitrary outer box
     containWithin(outer)
     {
         const rect = this.getBoundingRect();
@@ -221,6 +223,7 @@ class BaseWindow
     getPos() { return this.#position; }
     getBoundingRect() { return this.#eWindow.getBoundingClientRect(); }
     getSize() { return this.#size; }
+    getSizeNormalized() { return this.#sizeNormalized; }
     getWindowElements()
     {
         return {
@@ -263,9 +266,16 @@ class BaseWindow
     // Sets the "stable" size
     setSize(size)
     {
-        this.#size = size;
+        this.#sizeNormalized = size;
+        this.#size = this.#sizeNormalized.mulR(this.#sizeRatio);
         this.#eWindow.style.width = `${this.#size.x}px`;
         this.#eWindow.style.height = `${this.#size.y}px`;
+    }
+
+    setBoundingBoxSize(size)
+    {
+        this.#sizeNormalized = size;
+        this.#size = this.#sizeNormalized.mulR(this.#sizeRatio);
     }
 
     // Sets size while resizing
@@ -274,6 +284,14 @@ class BaseWindow
         const currentSize = this.#size.addR(size);
         this.#eWindow.style.width = `${currentSize.x}px`;
         this.#eWindow.style.height = `${currentSize.y}px`;
+    }
+
+    // Sets size ratio (for viewport changes)
+    setSizeRatio(ratio)
+    {
+        this.#sizeRatio = ratio;
+        this.setSize(this.getSizeNormalized());
+        //this.#eWindow.style.transform = `scale(${ratio})`;
     }
 
     // Hides window

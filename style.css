@@ -31,63 +31,41 @@ main {
     height: 100%;
     
 }
-#datetime {
-    position: relative;
-    bottom: -1040px;
-    display: flex;
-    width: auto;
-    text-align: right;
-    font-weight: bold;
-    color:rgb(255, 255, 255)
-}
-#date {
-    position: relative;
-    left: 1240px;
-    bottom: -18px;
-    width: 80px;
-    height: 20px;
-}
-#time {
-    
-    position: relative;
-    left: 1322px;
-    bottom: -3px;
-}
-#taskbar {
-    position: relative;
-    bottom: -4px;
-    text-align: left;
-    left: 150px;
-    height:40px;
-    width: 500px;
-}
-.taskbar-terminal-overlay {
-    position: relative;
-    left: -218px;
-    top: -1px;
-    height: 34px;
-}
-.taskbar-terminal-overlay:hover {
-    filter: brightness(0) invert(1);
-    opacity: 0.1;
-}
-.taskbar-terminal-image {
-    position: relative;
-    left: -4px;
-    top: -1px;
-    height:34px;
+
+.red{
+    color: red;
 }
 
+.green{
+    color: lime;
+}
+
+.blue{
+    color: blue;
+}
+
+
+
+/* ================ DESKTOP ================ */
 #desktop {
-    width: 1920px;
-    height: 1080px;
-    margin: auto;
-    background-image: url("images/xp-desktop.jpeg");
+    width: min(100%, 16 / 9 * 100vh);
+    height: min(100%, 9 / 16 * 100vw);
+    margin: 0;
+    border: 0;
+    /*overflow: auto;*/
+    /*background-image: url("images/xp-desktop.jpeg");*/
     border: 1px solid rgb(48,48,48);
 
 }
 
+#desktop > img {
+    width: 100%;
+    height: auto;
+}
 
+
+
+/* ================ BASE WINDOW ================ */
 .window {
     border: 1px solid rgb(48,48,48);
     box-shadow: 0px 0px 4px rgb(8,8,8);
@@ -143,7 +121,14 @@ main {
     height: calc(100% - 32px);
 }
 
+
+
+/* ================ TERMINAL ================ */
 .terminal {
+    width: 40%;
+}
+
+.terminal-content {
     font-size: 14px;
     background-color: rgb(12,12,12);
     height: calc(100% - 32px);
@@ -165,6 +150,58 @@ section.terminal-text pre {
     width: 100%;
     height: 466px;
 }
+
+
+#datetime {
+    position: relative;
+    bottom: -1040px;
+    display: flex;
+    width: auto;
+    text-align: right;
+    font-weight: bold;
+    color:rgb(255, 255, 255)
+}
+#date {
+    position: relative;
+    left: 1240px;
+    bottom: -18px;
+    width: 80px;
+    height: 20px;
+}
+#time {
+    
+    position: relative;
+    left: 1322px;
+    bottom: -3px;
+}
+#taskbar {
+    position: relative;
+    bottom: -4px;
+    text-align: left;
+    left: 150px;
+    height:40px;
+    width: 500px;
+}
+.taskbar-terminal-overlay {
+    position: relative;
+    left: -218px;
+    top: -1px;
+    height: 34px;
+}
+.taskbar-terminal-overlay:hover {
+    filter: brightness(0) invert(1);
+    opacity: 0.1;
+}
+.taskbar-terminal-image {
+    position: relative;
+    left: -4px;
+    top: -1px;
+    height:34px;
+}
+
+
+
+
 
 
 span:focus {

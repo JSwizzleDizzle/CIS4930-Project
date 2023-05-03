@@ -13,6 +13,7 @@ class Desktop
 {
     #eWindow;
     #windowRect;
+    #sizeRatio;
 
     #eChildWindows;
 
@@ -27,6 +28,7 @@ class Desktop
         this.#eWindow = windowElement;
         this.#windowRect = this.#eWindow.getBoundingClientRect();
         this.#eChildWindows = [];
+        this.#sizeRatio = 1.0;
 
         this.#initialize();
     }
@@ -37,6 +39,19 @@ class Desktop
     {
         this.#setupHTML();
         this.#setupEventListeners();
+
+        // Refreshes child windows when resized
+        new ResizeObserver(() => {
+            this.#windowRect = this.#eWindow.getBoundingClientRect();
+            this.#sizeRatio = this.#eWindow.clientWidth / 1920;
+            for(const win of this.#eChildWindows)
+            {
+                win.setSizeRatio(this.#sizeRatio);
+                //win.setSize(win.getSizeNormalized())
+                win.containWithin(this.#windowRect);
+                
+            }
+        }).observe(this.#eWindow);
     }
 
     #setupHTML()
@@ -85,17 +100,37 @@ class Desktop
         this.#eWindow.addEventListener("keydown", event => {
             switch(event.keyCode)
             {
+                case 38:
+                    
+                    for(const win of this.#eChildWindows)
+                    {
+                        win.containWithin(this.#windowRect);
+                    }
 
 
                 default:
                     break;
             }
         });
+
+        this.#eWindow.addEventListener("resize", event => {
+            
+            
+        });
     }
 
     registerWindow(window)
     {
         this.#eChildWindows.push(window);
+    }
+
+    refreshSize()
+    {
+        this.#windowRect = this.#eWindow.getBoundingClientRect();
+        for(const win of this.#eChildWindows)
+        {
+            win.containWithin(this.#windowRect);
+        }
     }
 }
 

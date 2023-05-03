@@ -53,6 +53,7 @@
 
     <main>
         <article id="desktop">  
+            <img src="images/xp-desktop.jpeg" alt="Windows XP Background">
             
             <div id="datetime">
                 <div id="taskbar"></div>
@@ -116,16 +117,16 @@
         
     
     // Webpage setup
-        const desktop = document.getElementById("desktop");
-        const game = new Desktop(desktop);
+        const eDesktop = document.getElementById("desktop");
+        const desktop = new Desktop(eDesktop);
 
-        const terminal = new Terminal(desktop, 0, testSystem);
-        const pong = new Pong(desktop, 1);
-        const flappybird = new FlappyBird(desktop, 2);
+        const terminal = new Terminal(eDesktop, 0, testSystem);
+        //const pong = new Pong(desktop, 1);
+        //const flappybird = new FlappyBird(desktop, 2);
 
-        game.registerWindow(terminal.getBaseWindow());
-        game.registerWindow(pong.getBaseWindow());
-        game.registerWindow(flappybird.getBaseWindow());
+        desktop.registerWindow(terminal.getBaseWindow());
+        //desktop.registerWindow(pong.getBaseWindow());
+        //desktop.registerWindow(flappybird.getBaseWindow());
     });
     </script>
 </body>
