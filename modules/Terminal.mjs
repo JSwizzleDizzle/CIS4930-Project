@@ -2,7 +2,7 @@
 import Vec2 from "./Vec2.mjs";
 import ResourceManager from "./ResourceManager.mjs";
 import BaseWindow from "./BaseWindow.mjs";
-import {FileSystem, FileData} from "./FileSystem.mjs";
+import FileSystem from "./FileSystem.mjs";
 import User from "./UserStats.mjs";
 
 
@@ -208,7 +208,7 @@ class Terminal
         }
         else if(this.#running){
             this.printLine();
-            this.#fileSystem.getFileTree().moveTo([args]) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
+            this.#fileSystem.setLocation(args) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
             //Encounter chance
             this.#enCounter += Math.random();
         }
@@ -309,11 +309,12 @@ class Terminal
         else if(this.#running)
         {
             this.printLine();
-            if (!this.#fileSystem.getFileTree().getData([args]))
+            const file = this.#fileSystem.getFile(args);
+            if (!file)
             {
                 this.printLine("'" + args + "' does not exist");
             }
-            else if (!this.#fileSystem.getFileTree().getData([args]).isDeletable())
+            else if (!file.isDeletable())
             {
                 this.printLine("'" + args + "' is not deletable");
             }
@@ -331,7 +332,7 @@ class Terminal
             }
             else
             {
-                this.#fileSystem.getFileTree().removeChild(args);
+                this.#fileSystem.deleteFile(args);
                 this.printLine("'" + args + "' was successfully deleted");
 
                 let chance = Math.random();
@@ -359,9 +360,13 @@ class Terminal
     {
         if(this.#running){
         this.printLine();
-        for (let [key, value] of this.#fileSystem.getFileTree().getNode().children)
+        for (const name of this.#fileSystem.getDirectoryNames())
         {
-            this.printLine(value.name);
+            this.printLine(name);
+        }
+        for (const name of this.#fileSystem.getFileNames())
+        {
+            this.printLine(name);
         }
         this.printLine();
         }
@@ -506,7 +511,7 @@ class Terminal
             this.#baseWindow.setPos(new Vec2(600, 120));
             this.#user.grunt();
             this.#fighting = true;
-            let message = this.#fileSystem.getFileTree().getNode().name;
+            let message = this.#fileSystem.getDirectory().getName();
             message += " attacks!";
             this.#enemy = "images/ascii-images/enemies/file.txt";
             this.printLine(message);
@@ -517,7 +522,7 @@ class Terminal
         }
         else if(this.#fighting){
             let attack = this.#user.enemyAtt();
-            let message = this.#fileSystem.getFileTree().getNode().name + " swings at you!";
+            let message = this.#fileSystem.getDirectory().getName(); + " swings at you!";
                 this.printLine(message);
             if(attack){
                 message = "Hits you for " + this.#user.damage + " damage!";
@@ -540,8 +545,8 @@ class Terminal
 
     printCharacters(enemy) 
     {   
-        this.printLine("");
-        this.printLine("");
+        this.printLine();
+        this.printLine();
         let enemyStat = "                            ENEMY HP: " + this.#user.enemyChp + "/" + this.#user.enemyHp;
         this.printLine(enemyStat);
         this.printFile(enemy);
@@ -549,7 +554,7 @@ class Terminal
         let status = "HP: " + this.#user.currentHp + "/" + this.#user.hp;
             this.printLine("USER STATUS:");
             this.printLine(status);
-        this.printLine("")
+        this.printLine()
     }
 
     cmdAttack(args){
@@ -569,7 +574,7 @@ class Terminal
                 this.#baseWindow.setSize(new Vec2(976, 512));
                 this.#baseWindow.setPos(new Vec2(450, 320));
                 this.#fighting = false;
-                this.printLine("You defeated " + this.#fileSystem.getFileTree().getNode().name + "!");
+                this.printLine("You defeated " + this.#fileSystem.getDirectory().getName() + "!");
                 this.#user.exp();
                 this.printLine("EXP gained: " + this.#user.enemyStr);
                 this.awaitCommand();
@@ -617,7 +622,7 @@ class Terminal
             {
                 const cmd = itemized.shift();
                 const args = itemized.join(' ');
-
+                
                 Terminal.commands.has(cmd) ? this[Terminal.commands.get(cmd)](args) : this.#cmdError();
             }
         }
@@ -632,9 +637,7 @@ class Terminal
     {
         this.#fight();
         this.#awaitingCommand = true;
-        let directoryPath = this.#fileSystem.getFileTree().getCurrentPath().join('\\');
-        directoryPath += '>';
-        this.printLine(directoryPath);
+        this.printLine(this.#fileSystem.getPathString() + '>');
         this.enableInput();
     }
 
@@ -659,7 +662,7 @@ class Terminal
     
 
     // Printing methods
-    printLine(text = "")
+    printLine(text = " ")
     {
         this.#numLines++;
         this.#eCurrentLine = document.createElement("pre");

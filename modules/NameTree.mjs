@@ -50,7 +50,7 @@ class NameTree
     //  HELPER METHODS
     ////////////////////////////////////////////////////////////////
 
-    // Moves from one tree location to another via a name path, returns false if the path is not found
+    // Moves from one tree location to another via a name path, returns null if the path is not found
     #navigateFrom(currentNode, path)
     {
         let travelNode = currentNode;
@@ -58,11 +58,11 @@ class NameTree
         {
             travelNode = name === ".." ? travelNode.parent : travelNode.children.get(name);
         }
-        return travelNode === undefined ? false : travelNode;
+        return travelNode === undefined ? null : travelNode;
     }
 
     // Specific case of navigate: from nodePtr
-    getNode(path = [])
+    #getNode(path = [])
     {
         return this.#navigateFrom(this.#nodePtr, path);
     }
@@ -79,18 +79,31 @@ class NameTree
     //  ACCESSORS
     ////////////////////////////////////////////////////////////////
 
-    // Retrieve node data
+    // DATA: Retrieves node data
     getData(path = [])
     {
-        return this.getNode(path).data;
+        const node = this.#getNode(path);
+        return node ? node.data : null;
     }
 
     getDataAbsolute(path = [])
     {
-        return this.#getNodeAbsolute(path).data;
+        const node = this.#getNodeAbsolute(path);
+        return node ? node.data : null;
     }
 
-    // Returns path to nodePtr as an array of name strings
+    hasChild(path = [])
+    {
+        return this.#getNode(path) !== null;
+    }
+
+    getChildrenNames()
+    {
+        return this.#nodePtr.children.keys();
+    }
+
+
+    // TRAVERSAL: Returns path to nodePtr as an array of name strings
     getCurrentPath()
     {
         let currentNode = this.#nodePtr;
@@ -110,26 +123,130 @@ class NameTree
         return this.#nodePtr.parent;
     }
 
+    
+
     ////////////////////////////////////////////////////////////////
     //  MUTATORS:
     //  Each method has a relative and absolute version
     //  Relative works from nodePtr, absolute works from root
     ////////////////////////////////////////////////////////////////
 
-    // Adding children
+
+    // CREATION: Adds child nodes
     addChild(name, data, path = [])
     {
-        const parentNode = this.getNode(path);
+        const parentNode = this.#getNode(path);
+        if(parentNode === null)
+        {
+            return false;
+        }
+
         parentNode.children.set(name, new Node(name, data, parentNode));
+        return true;
     }
 
     addChildAbsolute(name, data, path = [])
     {
         const parentNode = this.#getNodeAbsolute(path);
+        if(parentNode === null)
+        {
+            return false;
+        }
+
         parentNode.children.set(name, new Node(name, data, parentNode));
+        return true;
     }
 
-    // Creation, retrieval, and deletion of saved node points
+
+    // REMOVAL: deletes child nodes
+    removeChild(name, path = [])
+    {
+        if(!this.hasChild(path))
+        {
+            return false;
+        }
+
+        return this.#getNode(path).children.delete(name);
+    }
+
+    removeChildAbsolute(name, path)
+    {
+        const parentNode = this.#getNodeAbsolute(path);
+        return parentNode !== null && parentNode.children.delete(name);
+    }
+
+
+    // DATA: sets node data
+    setData(data, path = [])
+    {
+        if(this.#getNode(path) === null)
+        {
+            return false;
+        }
+
+        this.#getNode(path).data = data;
+        return true;
+    }
+
+    setDataAbsolute(data, path = [])
+    {
+        if(this.#getNodeAbsolute(path) === null)
+        {
+            return false;
+        }
+
+        this.#getNodeAbsolute(path).data = data;
+        return true;
+    }
+
+
+    // TRAVERSAL: Navigation of the NameTree by changing the nodePtr
+    moveTo(path)
+    {
+        const destination = this.#getNode(path);
+        if (destination === null || destination === undefined)
+        {
+            return false;
+        }
+        this.#nodePtr = destination;
+        return true;
+    }
+
+    moveToAbsolute(path = [])
+    {
+        const save = this.#nodePtr;
+        this.#nodePtr = this.#root;
+        const success = this.moveTo(path);
+        if(!success)
+        {
+            this.#nodePtr = save;
+        }
+        return success;
+    }
+
+
+    // STRUCTURE: Takes a node and reattach it somewhere else in the tree
+    // SUS ALERT: Not yet tested, may just delete the node altogether
+    transferNode(path, newPath)   
+    {
+        const currentNode = this.#getNode(path);
+        const newParent = this.#getNode(newPath);
+
+        newParent.children.set(currentNode.name, currentNode);
+        currentNode.parent.children.delete(currentNode.name);
+    }
+
+    transferNodeAbsolute(path, newPath)
+    {
+        const currentNode = this.#getNodeAbsolute(path);
+        const newParent = this.#getNodeAbsolute(newPath);
+
+        newParent.children.set(currentNode.name, currentNode);
+        currentNode.parent.children.delete(currentNode.name);
+    }
+
+
+    // KEY NODES: Creation, retrieval, and deletion of saved node points
     saveKeyNode(name)
     {
         const keyPtr = this.#nodePtr;
@@ -144,75 +261,6 @@ class NameTree
     deleteKeyNode(name)
     {
         this.#keyNodes.delete(name);
-    }
-
-    // Removing children
-    removeChild(name)
-    {
-        const parentNode = this.#nodePtr;
-        return parentNode.children.delete(name);
-    }
-    removeChild(name, path = [])
-    {
-        const parentNode = this.getNode(path);
-        return parentNode.children.delete(name);
-    }
-
-    removeChildAbsolute(name, path)
-    {
-        const parentNode = this.#getNodeAbsolute(path);
-        return parentNode.children.delete(name);
-    }
-
-    // Editing child data
-    setData(data, path = [])
-    {
-        this.getNode(path).data = data;
-    }
-
-    setDataAbsolute(data, path = [])
-    {
-        this.#getNodeAbsolute(path).data = data;
-    }
-
-    // Navigate by changing the nodePtr
-    moveTo(path)
-    {
-        var isValidNode = this.#nodePtr;
-        for(const name of path)
-        {
-            isValidNode = name === ".." ? this.#nodePtr.parent : this.#nodePtr.children.get(name);
-        }
-        //invalid nodes are null/undefined or files that can be deleted (e.g. Text files)
-        if (isValidNode === null || isValidNode === undefined || isValidNode.data.isDeletable()) return false;
-        this.#nodePtr = isValidNode;
-        return true;
-    }
-
-    moveToAbsolute(path = [])
-    {
-        this.#nodePtr = this.#root;
-        this.moveTo(path);
-    }
-
-    // Take a node and reattach it somewhere else in the tree
-    // SUS ALERT: Not yet tested, may just delete the node altogether
-    transferNode(path, newPath)   
-    {
-        const currentNode = this.getNode(path);
-        const newParent = this.getNode(newPath);
-
-        newParent.children.set(currentNode.name, currentNode);
-        currentNode.parent.children.delete(currentNode.name);
-    }
-
-    transferNodeAbsolute(path, newPath)
-    {
-        const currentNode = this.#getNodeAbsolute(path);
-        const newParent = this.#getNodeAbsolute(newPath);
-
-        newParent.children.set(currentNode.name, currentNode);
-        currentNode.parent.children.delete(currentNode.name);
     }
 
 
@@ -243,8 +291,6 @@ class NameTree
             currentNodes = nodeBuffer;
             nodeBuffer = [];
         }
-
-        
     }
 
 }
