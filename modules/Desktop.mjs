@@ -16,7 +16,7 @@ class Desktop
     #sizeRatio;
     #resizeRadius;
 
-    #eChildWindows;
+    #childWindows;
     #activeChildID;
 
     #mouseDown = false;
@@ -29,7 +29,8 @@ class Desktop
     {
         this.#eWindow = windowElement;
         this.#windowRect = this.#eWindow.getBoundingClientRect();
-        this.#eChildWindows = [];
+        this.#childWindows = new Map();
+        this.#activeChildID = 0;
         this.#sizeRatio = 1.0;
         this.#resizeRadius = 15.0;
 
@@ -43,16 +44,7 @@ class Desktop
         this.#setupHTML();
         this.#setupEventListeners();
 
-        // Refreshes child windows when resized
-        new ResizeObserver(() => {
-            this.#windowRect = this.#eWindow.getBoundingClientRect();
-            this.#sizeRatio = this.#eWindow.clientWidth / 1920;
-            for(const win of this.#eChildWindows)
-            {
-                win.setSizeRatio(this.#sizeRatio);
-                win.containWithin(this.#windowRect);
-            }
-        }).observe(this.#eWindow);
+        
     }
 
     #setupHTML()
@@ -62,12 +54,25 @@ class Desktop
 
     #setupEventListeners()
     {
+        // Refreshes child windows when resized
+        new ResizeObserver(() => {
+            this.#windowRect = this.#eWindow.getBoundingClientRect();
+            this.#sizeRatio = this.#eWindow.clientWidth / 1920;
+            for(const win of this.#childWindows.values())
+            {
+                win.setSizeRatio(this.#sizeRatio);
+                win.containWithin(this.#windowRect);
+            }
+        }).observe(this.#eWindow);
+
+
+        // Initial mouse click
         this.#eWindow.addEventListener("mousedown", event => {
             // Record mouse position
             this.#mousePosLast = new Vec2(event.clientX, event.clientY);
             this.#mouseDown = true;
 
-            for(const win of this.#eChildWindows)
+            for(const win of this.#childWindows.values())
             {
                 // Move window to front if clicked
                 if(win.isDraggable())
@@ -75,57 +80,81 @@ class Desktop
                     this.activateWindow(win);
                     event.stopPropagation();
                 }
-
-                // Resize window if necessary
-                this.setWindowResizeFlags(win, event.clientX, event.clientY);
             }
+
+            // Set resize flags if cursor is in the right area
+            this.setWindowResizeFlags(this.getActiveWindow(), event.clientX, event.clientY);
         });
 
+
+        // Single mouse release
         this.#eWindow.addEventListener("mouseup", event => {
-            for(const win of this.#eChildWindows)
+            for(const win of this.#childWindows.values())
             {
                 if(win.isDraggable())
                 {
-                    win.getPos().add(this.#mouseDiff);
-                    win.containWithin(this.#windowRect);
+                    win.addPos(this.#mouseDiff);
                 }
-                if(win.isResizable())
-                {
-                    win.getSizeNormalized().add(this.#mouseDiff);
-                    win.getSize().add(this.#mouseDiff);
-                    win.containWithin(this.#windowRect);
-                }
-                win.setResizable("reset", false);
             }
             this.#mousePosLast = new Vec2();
             this.#mouseDiff = new Vec2();
             this.#mouseDown = false;
+
+            // Reset window size flags
+            this.setWindowResizeFlags(this.getActiveWindow(), event.clientX, event.clientY);
             
         });
 
+
+        // Called every frame of movement
         this.#eWindow.addEventListener("mousemove", event => {
+
+            this.updateCursorStyle(this.getActiveWindow());
+
             if(this.#mouseDown)
             {
                 // Record mouse position and calculate cursor displacement
                 this.#mousePosCurrent = new Vec2(event.clientX, event.clientY);
                 this.#mouseDiff = this.#mousePosCurrent.subR(this.#mousePosLast);
 
-                for(const win of this.#eChildWindows)
+                const win = this.getActiveWindow();
+                if(win.isDraggable())
                 {
-                    const sizeBuffer = new Vec2(
-                        win.isResizable("x") ? this.#mouseDiff.x  : 0,
-                        win.isResizable("y") ? this.#mouseDiff.y : 0
-                    );
-                    win.setSizeBuffer(sizeBuffer);
-
-                    if(win.isDraggable())
-                    {
-                        win.setPosBuffer(this.#mouseDiff);
-                    }
+                    win.addPos(this.#mouseDiff);
+                    win.containWithin(this.#windowRect);
                 }
+
+
+                const addedSize = new Vec2();
+                let yFactor = 1;
+                let xFactor = 1;
+
+                if(win.isResizable("left"))
+                {
+                    win.addPos(new Vec2(this.#mouseDiff.x, 0));
+                    xFactor = -1;
+                }
+                if(win.isResizable("x"))
+                {
+                    addedSize.x += this.#mouseDiff.x * xFactor;
+                }
+
+                if(win.isResizable("top"))
+                {
+                    win.addPos(new Vec2(0, this.#mouseDiff.y));
+                    yFactor = -1;
+                }
+                if(win.isResizable("y"))
+                {
+                    addedSize.y += this.#mouseDiff.y * yFactor;
+                }
+
+                win.addSize(addedSize);
+                
+                // Record current mouse position for next iteration
+                this.#mousePosLast = this.#mousePosCurrent;
             }
 
-            this.updateCursorStyle()
         });
 
 
@@ -138,85 +167,72 @@ class Desktop
         });
     }
 
-    registerWindow(window)
+    getActiveWindow()
     {
-        this.#eChildWindows.push(window);
+        return this.#childWindows.get(this.#activeChildID);
     }
 
-    setWindowResizeFlags(window, mouseX, mouseY)
+    // Adds a window to child windows
+    registerWindow(window)
     {
-        const rect = window.getBoundingRect();
-        const leftGap = mouseX - rect.x;
-        const rightGap = mouseX - (rect.x + rect.width);
-        const topGap = mouseY - rect.y;
-        const bottomGap = mouseY - (rect.y + rect.height);
-        //console.log(leftGap, rightGap, topGap, bottomGap);
+        if(this.#childWindows.has(window.getID()))
+            return false;
 
-        if(leftGap < 0 && leftGap > -this.#resizeRadius)
-        {
-            // Resize on left
-            window.setResizable("left", true);
-            window.setDraggable(true);
-            console.log("left");
-        }
-        else if(rightGap > 0 && rightGap < this.#resizeRadius)
-        {
-            // Resize on right
-            window.setResizable("right", true);
-            console.log("right");
-        }
-        
-        if(topGap < 0 && topGap > -this.#resizeRadius)
-        {
-            // Resize on top
-            window.setResizable("top", true);
-            window.setDraggable(true);
-            console.log("top");
-        }
-        else if(bottomGap > 0 && bottomGap < this.#resizeRadius)
-        {
-            // Resize on bottom
-            window.setResizable("bottom", true);
-            console.log("bottom");
-        }
+        this.#childWindows.set(window.getID(), window);
+        return true;
     }
 
     // Moves a selected window to the front on the z axis
     activateWindow(window)
     {
-        //
+        // Set active ID
         this.#activeChildID = window.getID();
 
         // Reorder windows on z axis
-        for(const win of this.#eChildWindows)
+        for(const win of this.#childWindows.values())
         {
             if(win.getZIndex() > window.getZIndex())
             {
                 win.addZIndex(-1);
             }
         }
-        window.setZIndex(this.#eChildWindows.length - 1);
+        window.setZIndex(this.#childWindows.length - 1);
     }
 
-    refreshSize()
+    setWindowResizeFlags(window, mouseX, mouseY)
     {
-        this.#windowRect = this.#eWindow.getBoundingClientRect();
-        for(const win of this.#eChildWindows)
+        // Store pixel gaps between mouse cursor and window borders
+        const rect = window.getBoundingRect();
+        const leftGap = mouseX - rect.x;
+        const rightGap = mouseX - (rect.x + rect.width);
+        const topGap = mouseY - rect.y;
+        const bottomGap = mouseY - (rect.y + rect.height);
+
+        const yHeightValid = mouseY > rect.y - this.#resizeRadius && mouseY < rect.y + rect.height + this.#resizeRadius;
+        const xWidthValid = mouseX > rect.x - this.#resizeRadius && mouseX < rect.x + rect.width + this.#resizeRadius;
+        //console.log(leftGap, rightGap, topGap, bottomGap);
+
+        // Check side borders if mouse is in the correct y range 
+        if(yHeightValid)
         {
-            win.containWithin(this.#windowRect);
+            // Flag left or right if the mouse is close enough to the border
+            window.setResizable("left", leftGap < 0 && leftGap > -this.#resizeRadius);
+            window.setResizable("right", rightGap > 0 && rightGap < this.#resizeRadius);
+        }
+        
+        // Check top/bottom borders if mouse is in the correct x range 
+        if(xWidthValid)
+        {
+            // Flag top or bottom if the mouse is close enough to the border
+            window.setResizable("top", topGap < 0 && topGap > -this.#resizeRadius);
+            window.setResizable("bottom", bottomGap > 0 && bottomGap < this.#resizeRadius);
         }
     }
 
-    updateCursorStyle()
+    updateCursorStyle(window)
     {
-        let resizeX = false;
-        let resizeY = false;
-        for(const win of this.#eChildWindows)
-        {
-            resizeX = resizeX || win.isResizable("x");
-            resizeY = resizeY || win.isResizable("y");
-            console.log(resizeX, resizeY);
-        }
+        const resizeX = window.isResizable("x");
+        const resizeY = window.isResizable("y");
 
         if(resizeX && resizeY)
         {
@@ -235,6 +251,8 @@ class Desktop
             document.body.style.cursor = "default";
         }
     }
+
+    
 }
 
 

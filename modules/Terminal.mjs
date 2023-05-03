@@ -136,8 +136,8 @@ class Terminal
         // The whole window
         this.#eWindow = this.#baseWindow.getWindowElements().eWindow;
 
-        this.#eTaskbar = document.getElementById("taskbar");
-        this.#eTaskbar.innerHTML = `<img class="taskbar-terminal-image" src="images/taskbar/taskbar-terminal.png" alt="terminal taskbar"><img class="taskbar-terminal-overlay" id="terminal-button"src="images/taskbar/taskbar-terminal.png" alt="terminal taskbar">`;
+        //this.#eTaskbar = document.getElementById("taskbar");
+        //this.#eTaskbar.innerHTML = `<img class="taskbar-terminal-image" src="images/taskbar/taskbar-terminal.png" alt="terminal taskbar"><img class="taskbar-terminal-overlay" id="terminal-button"src="images/taskbar/taskbar-terminal.png" alt="terminal taskbar">`;
         
         this.#eWindow.setAttribute("class", "terminal window");
     }
@@ -145,9 +145,11 @@ class Terminal
     // Initializes cmd window event listeners
     #setupEventListeners()
     {
+        /*
+
         document.getElementById("terminal-button").addEventListener("click", () => {
             this.getBaseWindow().toggleMinimize();
-        });
+        });*/
         
         this.#eWindow.addEventListener("click", () => {
             this.#eActiveEntry.focus();
