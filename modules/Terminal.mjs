@@ -210,17 +210,10 @@ class Terminal
             this.printLine();
             if( this.#fileSystem.getFileTree().moveTo([args]) ){
                 this.#directory = args;
-                $.ajax({
-                    url: "../updates/Directory.php",
-                    type: "POST",
-                    data: {arg: args},
-                    success: function() {
-                      console.log(response); // This will display the response from the PHP file
-                    },
-                    error: function(xhr, status, error) {
-                      console.log("Error: " + error);
-                    }
-                  });
+                var xhttp = new XMLHttpRequest();
+            
+                xhttp.open("GET", "../updates/Directory.php?arg=" + args, true); 
+                xhttp.send();
             }else{
                 this.printFile("resources/cmd-cd-error.txt");
             }

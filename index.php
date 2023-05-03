@@ -238,7 +238,7 @@
                     url: 'map1.txt',
                     dataType: 'text',
                     success: function(data){
-                        console.log(data);
+                        //console.log(data);
                         testSystem.loadFromFile(data);
                     }
                 });
