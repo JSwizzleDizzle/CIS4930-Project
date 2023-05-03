@@ -35,6 +35,7 @@ class Terminal
     #enemy;
     #sprite;
     #bossName;
+    #bossSprite;
     #deletables;
     #safe;
 
@@ -50,6 +51,8 @@ class Terminal
 
     // Data
     #fileSystem;
+    #file2;
+    #file3;
 
 
 
@@ -77,7 +80,7 @@ class Terminal
         ["use", "cmdUseItem"]
     ]);
 
-    constructor(parent, id, filesys = new FileSystem(), directory = `C:\\>`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
+    constructor(parent, id, filesys = new FileSystem(), file2 = new FileSystem(), file3 = new FileSystem(), directory = `C:\\>`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
     {
         this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
 
@@ -90,11 +93,14 @@ class Terminal
         this.#running = false;
         this.#fileSystem = filesys;
         this.#enCounter = 0;
+        this.#bossCounter = 0;
         this.#bossName = "Microsoft Defender"
-        this.#bossCounter = "images/ascii-images/enemies/msoft";
+        this.#bossSprite = "images/ascii-images/enemies/msoft";
         this.#fighting = false;
         this.#user = new User("Guest",20,5,Math.random(),Math.random());
-        this.#deletables = 36;
+        this.#deletables = 2;
+        this.#file2 = file2;
+        this.#file3 = file3;
 
         this.#initialize();
     }
@@ -217,7 +223,7 @@ class Terminal
             this.printLine();
             this.#fileSystem.setLocation(args) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
             //Encounter chance
-            this.#enCounter += Math.random();
+            this.#enCounter += (Math.random() * 5);
         }
         this.awaitCommand();
     }
@@ -551,6 +557,8 @@ class Terminal
 
                     this.#fighting = false;
                     this.#running = false;
+                    this.#enCounter = 0;
+                    this.#bossCounter = 0;
                     this.cmdTerminalExe();
                     return;
                 }
@@ -566,7 +574,7 @@ class Terminal
             this.#fighting = true;
             if(enemyType == "boss"){
                 this.#enemy = new User(enemyName, Math.round(Math.random()*this.#user.hp*100)/100 + 4, 4, .5, .5);
-                this.printLine("~BOSS ENCOUNTER~")
+                this.printFile("resources/boss.txt")
             }
             else{
                 this.#enemy = new User(enemyName, Math.round(Math.random()*this.#user.hp*100)/100, 1 + Math.round(Math.random()*this.#user.str*100)/100, .25, .25);
@@ -576,33 +584,7 @@ class Terminal
             this.#sprite = img;
             this.printCharacters(this.#sprite + ".txt");
         }
-    //   if(this.#bossCounter >= 3 && !this.#fighting){
-    //         this.#fighting = true;
-    //         let message = "test";
-    //         message += " boss attacks!!";
-    //         this.printLine(message);
-    //         this.#bossCounter = 0;
-    //         this.#enemy = new User("Boss", Math.round(Math.random()*this.#user.hp*100)/100 + 4, 4, .5, .5);
-    //         this.printLine("TYPE ATT TO ATTACK AND INV TO ACCESS INVENTORY");
-    //         this.#enCounter = 0;
-    //         this.#bossCounter = 0;
-    //         this.#sprite = "images/ascii-images/enemies/internet-explorer";
-    //         this.printCharacters(this.#sprite + ".txt");
-    //         }
-
-    //     //Grunt (file)
-    //     if(this.#enCounter >= 1){
-    //         this.#enemy = new User("test", Math.round(Math.random()*this.#user.hp*100)/100, 1 + Math.round(Math.random()*this.#user.str*100)/100, .25, .25);
-    //         this.#fighting = true;
-    //         let message = "test";
-    //         message += " attacks!";
-    //         this.printLine(message);
-    //         this.printLine("TYPE ATT TO ATTACK AND INV TO ACCESS INVENTORY");
-    //         this.#enCounter = 0;
-    //         this.#bossCounter += Math.random();
-    //         this.#sprite = "images/ascii-images/enemies/file";
-    //         this.printCharacters(this.#sprite + ".txt");
-    //     }
+    
     }
 
     printCharacters(sprite) 
@@ -636,13 +618,19 @@ class Terminal
                 this.printLine("You defeated " + this.#enemy.uName + "!");
                 this.#user.exp(this.#enemy);
                 this.printLine("EXP gained: " + this.#enemy.str);
-                this.#safe = true;
-                this.cmdDelete(this.#enemy.uName);
-                if(this.#enCounter >= 10){
+                
+                if(this.#bossCounter >= 10){
                     this.changePhase();
+                    this.#bossCounter = 0;
+                }
+                else if(this.#enCounter >= 10){
                     this.#enCounter = 0;
                 }
-                this.$enCounter += Math.random();
+                else{
+                    this.#safe = true;
+                    this.cmdDelete(this.#enemy.uName);
+                }
+                this.$bossCounter += Math.random();
                 this.awaitCommand();
                 return;
             }
@@ -675,7 +663,21 @@ class Terminal
     }
 
     changePhase(){
-        //f(this.#bossName == "Microsoft Defender")
+        if(this.#bossName == "Microsoft Defender"){
+            this.#bossName = "Norton Antivirus";
+            this.#bossSprite = "images/ascii-images/enemies/norton";
+            this.#fileSystem = this.#file2;
+            this.#deletables = 2;
+        }
+        else if(this.#bossName == "Norton Antivirus"){
+            this.#bossName = "McAfee";
+            this.#bossSprite = "images/ascii-images/enemies/mcAfee";
+            this.#fileSystem = this.#file3;
+
+        }
+        else{
+            
+        }
     }
 
     ////////////////////////////////////////////////////////////////
@@ -721,10 +723,18 @@ class Terminal
 
     awaitCommand()
     {
-        if(this.#deletables == 0){
-            this.#fight(this.#bossName, 10, "boss", this.#bossCounter);
+        if(!this.#fighting){
+            let filestuff = this.#fileSystem.getFileNames();
+            if(filestuff[0] != undefined){
+                this.#fight(filestuff[0], this.#enCounter, "grunt", "images/ascii-images/enemies/file");
+            }
+            this.#fight(this.#bossName, this.#bossCounter, "boss", this.#bossSprite);
+            if(this.#deletables == 0){
+                this.#bossCounter = 10;
+                this.#fight(this.#bossName, this.#bossCounter, "boss", this.#bossSprite);
+            }
         }
-        this.#fight(this.#bossName, this.#enCounter, "boss", this.#bossCounter);
+        
         this.#awaitingCommand = true;
         this.printLine(this.#fileSystem.getPathString() + '>');
         this.enableInput();

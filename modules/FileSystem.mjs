@@ -168,7 +168,13 @@ class FileFolder
 
     getFileNames()
     {
-        return this.#files.keys();
+        const keys = this.#files.keys();
+        const names = [];
+        for(const child of keys)
+        {
+            names.push(child);
+        }
+        return names;
     }
 
 
