@@ -205,7 +205,7 @@ class Terminal
         }
         else if(this.#running){
             this.printLine();
-            this.#fileSystem.getFileTree().moveTo([args]) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
+            this.#fileSystem.setLocation(args) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
             //Encounter chance
             this.#enCounter += Math.random();
         }
@@ -349,6 +349,10 @@ class Terminal
         {
             this.printLine(name);
         }
+        for (const name of this.#fileSystem.getFileNames())
+        {
+            this.printLine(name);
+        }
         this.printLine();
         }
         this.awaitCommand();
@@ -457,7 +461,7 @@ class Terminal
             this.#baseWindow.setPos(new Vec2(600, 120));
             this.#user.grunt();
             this.#fighting = true;
-            let message = this.#fileSystem.getFileTree().getNode().name;
+            let message = this.#fileSystem.getDirectory().getName();
             message += " attacks!";
             this.#enemy = "images/ascii-images/enemies/file.txt";
             this.printLine(message);
@@ -583,9 +587,7 @@ class Terminal
     {
         this.#fight();
         this.#awaitingCommand = true;
-        let directoryPath = this.#fileSystem.getFileTree().getCurrentPath().join('\\');
-        directoryPath += '>';
-        this.printLine(directoryPath);
+        this.printLine(this.#fileSystem.getPathString() + '>');
         this.enableInput();
     }
 

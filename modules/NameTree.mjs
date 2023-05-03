@@ -62,6 +62,11 @@ class NameTree
     }
 
     // Specific case of navigate: from nodePtr
+    getNode(path = [])  // DELETE
+    {
+        return this.#navigateFrom(this.#nodePtr, path);
+    }
+
     #getNode(path = [])
     {
         return this.#navigateFrom(this.#nodePtr, path);
@@ -99,12 +104,7 @@ class NameTree
 
     getChildrenNames()
     {
-        const names = [];
-        for (let [key, value] of this.#nodePtr.children)
-        {
-            names.push(value.name);
-        }
-        return names;
+        return this.#nodePtr.children.keys();
     }
 
 

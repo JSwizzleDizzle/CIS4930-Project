@@ -79,12 +79,14 @@ class TextFile
     #content;
     #type;
 
-    constructor(name, content, deletable = true, date = Date.now())
+    constructor(name, content = "", deletable = true, date = Date.now())
     {
         this.#content = content;
         this.#metadata = new FileMetadata(name, deletable, date);
         this.#metadata.setSize(content.length);
         this.#type = name.slice(name.lastIndexOf('.')).toLowerCase();
+
+        console.log(this.#metadata.toString());
     }
 
 
@@ -137,7 +139,7 @@ class FileFolder
 
     constructor(name, files = [], deletable = true)
     {
-        this.#isDrive = Directory.driveRegex.test(this.getName());
+        this.#isDrive = FileFolder.driveRegex.test(name);
         this.#metadata = new FileMetadata(name, !this.#isDrive && deletable, Date.now());
         this.#files = new Map();
         this.addFiles(files);
@@ -162,22 +164,27 @@ class FileFolder
         return null;
     }
 
+    getFileNames()
+    {
+        return this.#files.keys();
+    }
+
 
 
     // ================ MUTATORS ================ //
-    addFile(file, overwrite = false)
+    addFile(fileName, content = "", overwrite = false)
     {
-        if(this.#files.has(file.getName()) && !overwrite)
+        if(this.#files.has(fileName) && !overwrite)
             return false;
 
-        this.#metadata.incrementSize(file.getSize());
-        this.#files.set(file.getName(), file);
+        this.#metadata.incrementSize(content.length);
+        this.#files.set(fileName, new TextFile(fileName, content));
         return true;
     }
 
     addFiles(files, overwrite = false)
     {
-        success = true;
+        let success = true;
         for(const file of files)
         {
             success = success && this.addFile(file, overwrite);
@@ -225,7 +232,12 @@ class FileSystem
 
     constructor()
     {
-        this.#fileTree = new NameTree(new FileFolder("ROOT"));
+        this.#fileTree = new NameTree(new FileFolder("root"), "root");
+    }
+
+    getFileTree()
+    {
+        return this.#fileTree;
     }
 
 
@@ -235,17 +247,17 @@ class FileSystem
 
 
     // ================ ACCESSORS ================ //
-    getDirectory(pathString)
+    getDirectory(pathString = "")
     {
         // Split by '/' or by '\'
-        const pathList = pathString.split(FileSystem.slashes);
+        const pathList = pathString === "" ? [] : pathString.split(FileSystem.slashes);
         return this.#fileTree.getData(pathList);
     }
 
-    getFile(pathString)
+    getFile(pathString = "")
     {
         // Split by '/' or by '\'
-        const pathList = pathString.split(FileSystem.slashes);
+        const pathList = pathString === "" ? [] : pathString.split(FileSystem.slashes);
         const dir = this.#fileTree.getData(pathList.slice(0, -1));
         return dir ? dir.getFile(pathList.at(-1)) : null;
     }
@@ -255,12 +267,17 @@ class FileSystem
         return this.#fileTree.getChildrenNames();
     }
 
+    getFileNames()
+    {
+        return this.#fileTree.getData().getFileNames();
+    }
+
     
 
     getPathString()
     {
         // Remove "ROOT" and join with '\'
-        return this.#fileTree.getCurrentPath().slice(1, -1).join('\\') + '>';
+        return this.#fileTree.getCurrentPath().join('\\');
     }
 
 
@@ -410,9 +427,25 @@ class FileSystem
     }
     */
 
-    buildFromFile(file)
+    loadFromFile(s)
     {
+        const file = s.split(/\r?\n/);
+        let line = file[0].split(',');
+        const tree = new NameTree(new FileFolder(line[1]), line[1]);
 
+        for (let i = 1; i < file.length; i++)
+        {
+            line = file[i].split(',');
+            if (line[0] === 'd')
+            {   
+                tree.addChildAbsolute(line[1], new FileFolder(line[1]), line.slice(2));
+            }
+            else if (line[0] === 'f')
+            {
+                tree.getDataAbsolute(line.slice(3)).addFile(line[1]);
+            }
+        }
+        this.#fileTree = tree;
     }
     
 }

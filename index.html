@@ -75,6 +75,7 @@
         import FileSystem from "./modules/FileSystem.mjs";
         import Pong from "./modules/Pong.mjs";
         import FlappyBird from "./modules/FlappyBird.mjs";
+        import ResourceManager from "./modules/ResourceManager.mjs"
 
         // Tree testing
         /*
@@ -94,10 +95,7 @@
         testTree.moveToAbsolute();
         console.log(testTree.getCurrentPath().join('\\') + '>');
         var testSystem = new FileSystem(testTree);
-        */
 
-        $(function() {
-        var testSystem = new FileSystem();
         $.ajax({
             url: "map1.txt",
             dataType: "text",
@@ -106,6 +104,16 @@
                 testSystem.loadFromFile(data);
             }
         });
+        */
+
+
+        $(function() {
+
+        const fileText = ResourceManager.readFile("map1.txt");
+        const testSystem = new FileSystem();
+        testSystem.loadFromFile(fileText);
+
+        
     
     // Webpage setup
         const desktop = document.getElementById("desktop");
