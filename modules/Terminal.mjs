@@ -33,6 +33,8 @@ class Terminal
     #fighting;
     #user;
     #enemy;
+    #sprite;
+
 
     // HTML Elements
     #eWindow;
@@ -87,7 +89,7 @@ class Terminal
         this.#enCounter = 0;
         this.#bossCounter = 2;
         this.#fighting = false;
-        this.#user = new User("Guest",20,20*Math.random(),Math.random(),Math.random());
+        this.#user = new User("Guest",20,5,Math.random(),Math.random());
 
         this.#initialize();
     }
@@ -495,40 +497,60 @@ class Terminal
     ////////////////////////////////////////////////////////////////
     //  COMBAT COMMANDS
     ////////////////////////////////////////////////////////////////
+
+    sleep(milliseconds) {
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+          if ((new Date().getTime() - start) > milliseconds){
+            break;
+          }
+        }
+      }
+
+
     #fight(){
-        //Bossmode
-        // if(this.#bossCounter >= 3){
-        //     this.#fighting = true;
-        //     let message = this.#fileSystem.getFileTree().getNode().name;
-        //     message += " boss attacks!!";
-        //     this.printLine(message);
-        //     this.#bossCounter = 0;
-        //     this.#user.boss();
-        // }
+      if(this.#bossCounter >= 3 && !this.#fighting){
+            this.#fighting = true;
+            let message = "test";
+            message += " boss attacks!!";
+            this.printLine(message);
+            this.#bossCounter = 0;
+            this.#enemy = new User("Boss", Math.round(Math.random()*this.#user.hp*100)/100 + 4, 4, .5, .5);
+            this.printLine("TYPE ATT TO ATTACK AND INV TO ACCESS INVENTORY");
+            this.#enCounter = 0;
+            this.#bossCounter = 0;
+            this.#sprite = "images/ascii-images/enemies/internet-explorer";
+            this.printCharacters(this.#sprite + ".txt");
+            }
+
         //Grunt (file)
         if(this.#enCounter >= 1){
-            this.#baseWindow.setSize(new Vec2(700, 800));
-            this.#baseWindow.setPos(new Vec2(600, 120));
-            this.#user.grunt();
+            this.#enemy = new User("test", Math.round(Math.random()*this.#user.hp*100)/100, 1 + Math.round(Math.random()*this.#user.str*100)/100, .25, .25);
             this.#fighting = true;
-            let message = this.#fileSystem.getDirectory().getName();
+            let message = "test";
             message += " attacks!";
-            this.#enemy = "images/ascii-images/enemies/file.txt";
             this.printLine(message);
             this.printLine("TYPE ATT TO ATTACK AND INV TO ACCESS INVENTORY");
             this.#enCounter = 0;
             this.#bossCounter += Math.random();
-            this.printCharacters(this.#enemy);
+            this.#sprite = "images/ascii-images/enemies/file";
+            this.printCharacters(this.#sprite + ".txt");
         }
+
         else if(this.#fighting){
-            let attack = this.#user.enemyAtt();
-            let message = this.#fileSystem.getDirectory().getName(); + " swings at you!";
+           
+            this.sleep(10000)
+            let attack = this.#enemy.att(this.#user);
+            let message = this.#enemy.uName + " swings at you!";
                 this.printLine(message);
+            setTimeout(this.printCharacters(this.#sprite + ".txt"),5000);
+
             if(attack){
-                message = "Hits you for " + this.#user.damage + " damage!";
+                message = "Hits you for " + this.#enemy.damage + " damage!";
                 this.printLine(message);
                 if(this.#user.currentHp <= 0){
                     this.printLine("You've been defeated! Gameover!")
+
                     this.#fighting = false;
                     this.#running = false;
                     this.cmdTerminalExe();
@@ -539,48 +561,57 @@ class Terminal
                 message = "It misses!"
                 this.printLine(message);
             }
-            this.printCharacters(this.#enemy);
         }
     }
 
-    printCharacters(enemy) 
+    printCharacters(sprite) 
     {   
-        this.printLine();
-        this.printLine();
-        let enemyStat = "                            ENEMY HP: " + this.#user.enemyChp + "/" + this.#user.enemyHp;
+        this.printLine("");
+        this.printLine("");
+        let enemyStat = "                            ENEMY HP: " + this.#enemy.currentHp + "/" + this.#enemy.hp;
         this.printLine(enemyStat);
-        this.printFile(enemy);
+        this.printFile(sprite);
         this.printFile("images/ascii-images/bacteriophage.txt");
-        let status = "HP: " + this.#user.currentHp + "/" + this.#user.hp;
-            this.printLine("USER STATUS:");
-            this.printLine(status);
-        this.printLine()
+        let status = "USER HP: " + this.#user.currentHp + "/" + this.#user.hp;
+        this.printLine(status);
+        this.printLine("")
+
     }
 
     cmdAttack(args){
         if(this.#fighting){
-            let attack = this.#user.att();
+            let attack = this.#user.att(this.#enemy);
             let message = "You attack!";
                 this.printLine(message);
+                
+            if(this.#enemy.currentHp <= 0){
+                this.#fighting = false;
+                this.printCharacters(this.#sprite + "Dead.txt");
+                message = "You inflict " + this.#user.damage + " damage!";
+                this.printLine(message);
+                this.printLine("You defeated " + this.#enemy.uName + "!");
+                this.#user.exp(this.#enemy);
+                this.printLine("EXP gained: " + this.#enemy.str);
+                this.awaitCommand();
+                return;
+            }
+
             if(attack){
-                message = "You hit for " + this.#user.damage + " damage!";
+                if(this.#user.crit){
+                    this.printCharacters(this.#sprite + "Hot.txt");
+                    this.printLine("It's a critical hit!!")
+                }
+                else{
+                    this.printCharacters(this.#sprite + ".txt");
+                }
+                message = "You inflict " + this.#user.damage + " damage!";
                 this.printLine(message);
             }
             else{
                 message = "You miss!"
                 this.printLine(message);
-            }
-            if(this.#user.enemyChp <= 0){
-                this.#baseWindow.setSize(new Vec2(976, 512));
-                this.#baseWindow.setPos(new Vec2(450, 320));
-                this.#fighting = false;
-                this.printLine("You defeated " + this.#fileSystem.getDirectory().getName() + "!");
-                this.#user.exp();
-                this.printLine("EXP gained: " + this.#user.enemyStr);
-                this.awaitCommand();
-                return;
-            }
-            this.printCharacters(this.#enemy);
+            }           
+            
         }
         else if(!this.#running){
             this.printLine("Start the game first!");
@@ -589,7 +620,7 @@ class Terminal
             this.printLine("You lunge into the darkness!")
             this.printLine("...but there was nobody to attack.")
         }
-        this.awaitCommand()
+        this.awaitCommand();
     }
 
     ////////////////////////////////////////////////////////////////
