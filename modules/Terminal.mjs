@@ -34,6 +34,9 @@ class Terminal
     #user;
     #enemy;
     #sprite;
+    #bossName;
+    #deletables;
+    #safe;
 
 
     // HTML Elements
@@ -87,9 +90,11 @@ class Terminal
         this.#running = false;
         this.#fileSystem = filesys;
         this.#enCounter = 0;
-        this.#bossCounter = 2;
+        this.#bossName = "Microsoft Defender"
+        this.#bossCounter = "images/ascii-images/enemies/msoft";
         this.#fighting = false;
         this.#user = new User("Guest",20,5,Math.random(),Math.random());
+        this.#deletables = 36;
 
         this.#initialize();
     }
@@ -310,6 +315,8 @@ class Terminal
         }
         else if(this.#running)
         {
+            
+
             this.printLine();
             const file = this.#fileSystem.getFile(args);
             if (!file)
@@ -326,6 +333,8 @@ class Terminal
                 {
                     this.printLine("1 file key consumed!")
                     this.printLine("'" + args + "' was successfully unlocked and deleted")
+                    //Counting down files in map
+                    this.#deletables --;
                 }
                 else
                 {
@@ -334,8 +343,20 @@ class Terminal
             }
             else
             {
+                if(!this.#safe){
+                    //75% encounter chance when stealing files
+                    let fileFight = Math.random();
+                    if(fileFight <= .75){
+                    this.#fight(args, 10, "grunt", "images/ascii-images/enemies/file");
+                    this.awaitCommand();
+                    return;
+                    }
+                }
+
                 this.#fileSystem.deleteFile(args);
                 this.printLine("'" + args + "' was successfully deleted");
+                //Counting down files in map
+                this.#deletables --;
 
                 let chance = Math.random();
                 if (chance < 0.2)
@@ -351,6 +372,10 @@ class Terminal
                     {
                         this.printLine("1 file key added to inventory!");
                     }
+                }
+                if(this.#safe){
+                    this.#safe = false;
+                    return;
                 }
             }
             
@@ -508,36 +533,9 @@ class Terminal
       }
 
 
-    #fight(){
-      if(this.#bossCounter >= 3 && !this.#fighting){
-            this.#fighting = true;
-            let message = "test";
-            message += " boss attacks!!";
-            this.printLine(message);
-            this.#bossCounter = 0;
-            this.#enemy = new User("Boss", Math.round(Math.random()*this.#user.hp*100)/100 + 4, 4, .5, .5);
-            this.printLine("TYPE ATT TO ATTACK AND INV TO ACCESS INVENTORY");
-            this.#enCounter = 0;
-            this.#bossCounter = 0;
-            this.#sprite = "images/ascii-images/enemies/internet-explorer";
-            this.printCharacters(this.#sprite + ".txt");
-            }
-
-        //Grunt (file)
-        if(this.#enCounter >= 1){
-            this.#enemy = new User("test", Math.round(Math.random()*this.#user.hp*100)/100, 1 + Math.round(Math.random()*this.#user.str*100)/100, .25, .25);
-            this.#fighting = true;
-            let message = "test";
-            message += " attacks!";
-            this.printLine(message);
-            this.printLine("TYPE ATT TO ATTACK AND INV TO ACCESS INVENTORY");
-            this.#enCounter = 0;
-            this.#bossCounter += Math.random();
-            this.#sprite = "images/ascii-images/enemies/file";
-            this.printCharacters(this.#sprite + ".txt");
-        }
-
-        else if(this.#fighting){
+      //Check counter, input enemyname, check type, return true if combat started false if not/going
+    #fight(enemyName, counter, enemyType, img){
+        if(this.#fighting){
            
             this.sleep(10000)
             let attack = this.#enemy.att(this.#user);
@@ -562,6 +560,49 @@ class Terminal
                 this.printLine(message);
             }
         }
+        else if(counter >= 10){
+            this.#baseWindow.setSize(new Vec2(700, 800));
+            this.#baseWindow.setPos(new Vec2(600, 120));
+            this.#fighting = true;
+            if(enemyType == "boss"){
+                this.#enemy = new User(enemyName, Math.round(Math.random()*this.#user.hp*100)/100 + 4, 4, .5, .5);
+                this.printLine("~BOSS ENCOUNTER~")
+            }
+            else{
+                this.#enemy = new User(enemyName, Math.round(Math.random()*this.#user.hp*100)/100, 1 + Math.round(Math.random()*this.#user.str*100)/100, .25, .25);
+            }
+            this.printLine(enemyName + " attacks!!");
+            this.printLine("TYPE ATT TO ATTACK AND INV TO ACCESS INVENTORY");
+            this.#sprite = img;
+            this.printCharacters(this.#sprite + ".txt");
+        }
+    //   if(this.#bossCounter >= 3 && !this.#fighting){
+    //         this.#fighting = true;
+    //         let message = "test";
+    //         message += " boss attacks!!";
+    //         this.printLine(message);
+    //         this.#bossCounter = 0;
+    //         this.#enemy = new User("Boss", Math.round(Math.random()*this.#user.hp*100)/100 + 4, 4, .5, .5);
+    //         this.printLine("TYPE ATT TO ATTACK AND INV TO ACCESS INVENTORY");
+    //         this.#enCounter = 0;
+    //         this.#bossCounter = 0;
+    //         this.#sprite = "images/ascii-images/enemies/internet-explorer";
+    //         this.printCharacters(this.#sprite + ".txt");
+    //         }
+
+    //     //Grunt (file)
+    //     if(this.#enCounter >= 1){
+    //         this.#enemy = new User("test", Math.round(Math.random()*this.#user.hp*100)/100, 1 + Math.round(Math.random()*this.#user.str*100)/100, .25, .25);
+    //         this.#fighting = true;
+    //         let message = "test";
+    //         message += " attacks!";
+    //         this.printLine(message);
+    //         this.printLine("TYPE ATT TO ATTACK AND INV TO ACCESS INVENTORY");
+    //         this.#enCounter = 0;
+    //         this.#bossCounter += Math.random();
+    //         this.#sprite = "images/ascii-images/enemies/file";
+    //         this.printCharacters(this.#sprite + ".txt");
+    //     }
     }
 
     printCharacters(sprite) 
@@ -585,13 +626,23 @@ class Terminal
                 this.printLine(message);
                 
             if(this.#enemy.currentHp <= 0){
+                this.#baseWindow.setSize(new Vec2(976, 512));
+                this.#baseWindow.setPos(new Vec2(450, 320));
                 this.#fighting = false;
+                
                 this.printCharacters(this.#sprite + "Dead.txt");
                 message = "You inflict " + this.#user.damage + " damage!";
                 this.printLine(message);
                 this.printLine("You defeated " + this.#enemy.uName + "!");
                 this.#user.exp(this.#enemy);
                 this.printLine("EXP gained: " + this.#enemy.str);
+                this.#safe = true;
+                this.cmdDelete(this.#enemy.uName);
+                if(this.#enCounter >= 10){
+                    this.changePhase();
+                    this.#enCounter = 0;
+                }
+                this.$enCounter += Math.random();
                 this.awaitCommand();
                 return;
             }
@@ -621,6 +672,10 @@ class Terminal
             this.printLine("...but there was nobody to attack.")
         }
         this.awaitCommand();
+    }
+
+    changePhase(){
+        //f(this.#bossName == "Microsoft Defender")
     }
 
     ////////////////////////////////////////////////////////////////
@@ -666,7 +721,10 @@ class Terminal
 
     awaitCommand()
     {
-        this.#fight();
+        if(this.#deletables == 0){
+            this.#fight(this.#bossName, 10, "boss", this.#bossCounter);
+        }
+        this.#fight(this.#bossName, this.#enCounter, "boss", this.#bossCounter);
         this.#awaitingCommand = true;
         this.printLine(this.#fileSystem.getPathString() + '>');
         this.enableInput();
