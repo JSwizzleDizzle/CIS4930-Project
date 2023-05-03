@@ -93,6 +93,11 @@ class Inventory
                 return false;
             }
         }
+        setItems(healqty, keysqty)
+        {
+            this.inventory.items.set("heal", healqty);
+            this.inventory.items.set("keys", keysqty);
+        }
     
     //<?php 
     // $conn = mysqli_connect("mysql.cise.ufl.edu", "username", "password", "database");

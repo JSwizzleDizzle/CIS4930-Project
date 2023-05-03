@@ -1,3 +1,4 @@
+#!/usr/local/bin/php
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,102 +25,139 @@
     
 </head>
 <body id="body">
-    <?php
-        // once the input is validated, then hide the login stuff
-        $showLoginCode = true;
-        $displayGame = false;
-        // Check if the form was submitted
-        if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+<?php
+    function debug_to_console($data){
+        $output = $data;
+        if (is_array($output)) $output = implode(',', $output);
+        echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
+    }
+
+    // login code is shown by default, game code is hidden
+    $showLoginCode = true;
+    $displayGame = false;
+
+    
+    // Check if the form was submitted
+    if( $_SERVER['REQUEST_METHOD'] == 'POST' ){
+
+        // Get the form data
+        $inputtedUsername = $_POST['username'];
+        $inputtedPassword = $_POST['password'];
+        $inputtedProfile = $_POST['profile'];
+
+        //Database connection
+        $conn = new mysqli("mysql.cise.ufl.edu", "elewinkoh", "mysqlpassw0rd", "Terminal_Illness");
+        if( $conn->connect_error ){ die("Connection failed: " . $conn->connect_error);}
+
+
+
+        ////////////////////////////////////////////////////////////////
+        ////////////////// load Users from database ////////////////////
+        ////////////////////////////////////////////////////////////////
+        $users = "SELECT * FROM Users";
+        $result = $conn->query($users);
+
+        // check Username table for the inputted username
+        $foundUser = false;
+        $invalidPassword = false;
+        while( $row = mysqli_fetch_array($result, MYSQLI_ASSOC) ){
+
+            $username = $row['Username'];
+            $password = $row['Password'];
+            if( $username == $inputtedUsername && $password != $inputtedPassword ){ $invalidPassword = true;  break; }
+            if( $username == $inputtedUsername ){ $foundUser = true; break;}
+        }
+        
+
+        if( $invalidPassword ){
             
-            // Get the form data
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-            $profile = $_POST['profile'];
+            // username is VALID, password id INVALID
+            // do not show the main game page and remain on login page
+            echo "alert('password is invalid')";
+        }else{
 
+            // username and password are VALID
+            // display main game page, hide login page
+            $showLoginCode = false;
+            $displayGame = true;
 
+            // if user was nat found, then update the database for this user
+            if( $foundUser == false ){
 
-            //Database connection
-            $conn = new mysqli("mysql.cise.ufl.edu", "elewinkoh", "mysqlpassw0rd", "DBNAME");
-            if( $conn->connect_error ){ die("Connection failed: " . $conn->connect_error);}
+                //sanitize inputs
+                $stmt = $conn->prepare("INSERT INTO Users (Username, Password) VALUES (?, ?)");
+                $stmt->bind_param('ss', $sanitized_username, $sanitized_password);
+                $sanitized_username = $conn->real_escape_string($inputtedUsername);
+                $sanitized_password = $conn->real_escape_string($inputtedPassword);
 
-
-            ////////////////////////////////////////////////////////////////
-            ////////////////// load Users from database ////////////////////
-            ////////////////////////////////////////////////////////////////
-            $users = "SELECT * FROM Users";
-            $result = $conn->query($sql);
-
-            // check Username table for the inputted username
-            $foundUser = false;
-            $invalidPassword = false;
-            while( $row = $result->fetch_assoc() ){
-
-                $username = $row['Username'];
-                $password = $row['Password'];
-                if( $username == $inputtedUsername && $password != $inputtedPassword ){ $invalidPassword = true; break; }
-                if( $username == $inputtedUsername ){ $foundUser = true; break;}
+                $stmt->execute();
+                $stmt->close();
             }
 
-            if( $invalidPassword ){
-                echo "alert('password is invalid')";
-            }else{
 
-                // inputted username is new Or username and password is correct
-                $showLoginCode = false;
-                $displayGame = true;
 
-                // if user nat found, then update the database for this user
-                if( $foundUser == false ){
+            ////////////////////////////////////////////////////////////////
+            /////////////////    load the profile      /////////////////////
+            ////////////////////////////////////////////////////////////////
+            $profiles = "SELECT * FROM Profiles INNER JOIN Users ON Users.Username=Profiles.Username WHERE Profiles.Name='$inputtedProfile'";
+            $result = $conn->query($profiles);
+            
+            // if the profile is not found, create a new one under the current username
+            if( $result->num_rows <= 0 ){
+                debug_to_console("NEW PROFILE CREATED");
+                // default stats
+                $currentHealth = 20.0;
+                $maxHealth = 20.0;
+                $attack = 10.0;
+                $defense = 0.5;
+                $evasion = 0.5;
+                $map = "map1.txt";
+                $directory = "C:\\>";
+                $healqty = 0;
+                $keyqty = 0;
 
-                    $stmt = $conn->prepare("INSERT INTO Users (Username, Password, Date) VALUES (?, ?, ?)");
-                    $stmt->bind_param('sss', $sanitized_username, $sanitized_password, $sanitized_date);
-                    $sanitized_username = $conn->real_escape_string($username);
-                    $sanitized_password = $conn->real_escape_string($password);
-                    $sanitized_date = htmlspecialchars($_POST['date']);
+                // sanitize inputs
+                $stmt = $conn->prepare("INSERT INTO Profiles (Name, Username, Max_health, Current_health, Attack, Defense, Evasion, Location, Map, Heal_quantity, Key_quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param('ssdddddssii', $sName, $sUsername, $sMaxHealth, $sCurrentHealth, $sAttack, $sDefense, $sEvasion, $sDirectory, $sMap, $sHealqty, $sKeyqty);
+                $sName = $conn->real_escape_string($inputtedProfile);
+                $sUsername = $conn->real_escape_string($inputtedUsername);
+                $sCurrentHealth = $conn->real_escape_string($currentHealth);
+                $sMaxHealth = $conn->real_escape_string($maxHealth);
+                $sAttack = $conn->real_escape_string($attack);
+                $sDefense = $conn->real_escape_string($defense);
+                $sEvasion = $conn->real_escape_string($evasion);
+                $sMap = $conn->real_escape_string($map);
+                $sDirectory = $conn->real_escape_string($directory);
+                $sHealqty = $conn->real_escape_string($healqty);
+                $sKeyqty = $conn->real_escape_string($keyqty);  
 
-                    $stmt->execute();
-                    $stmt->close();
-                }
-
-                ////////////////////////////////////////////////////////////////
-                ///////////////// load the profile columns /////////////////////
-                ////////////////////////////////////////////////////////////////
-                $profiles = "SELECT $profile FROM Profiles WHERE Username = $username";
-                $result = $conn->query($profiles);
-                $row = $result->fetch_assoc();
-
-                //Primary Key for Profile
+                $stmt->execute();
+                $stmt->close();
+            } 
+            
+            // profile must be in DB, so fetch its contents
+            $profiles = "SELECT * FROM Profiles WHERE Name='$inputtedProfile'";
+            $result = $conn->query($profiles);
+            while( $row = mysqli_fetch_array($result,  MYSQLI_ASSOC) ){
+                
                 $profileName = $row['Name'];
-
-                // User Stats
-                $level = $row['Level'];
-                $currentHealth = $row['Current health'];
-                $maxHealth = $row['Max health'];
+                $currentHealth = $row['Current_health'];
+                $maxHealth = $row['Max_health'];
                 $attack = $row['Attack'];
                 $defense = $row['Defense'];
                 $evasion = $row['Evasion'];
-                $experience = $row['Experience'];
-
-                // Location
-                $directory = $row['Directory'];
+                $directory = $row['Location'];
                 $map = $row['Map'];
-   
-                ////////////////////////////////////////////////////////////////
-                /////////////////////// load Inventory /////////////////////////
-                ////////////////////////////////////////////////////////////////
-                $itemsMap = array();
-                $itemsCollected = "SELECT * FROM Items_collected WHERE Profile_name = '$profileName'";
-                $result = $conn->query($itemsCollected);
-                while ($row = $result->fetch_assoc()) {
-                    $itemName = $row['Item_name'];
-                    $numberHeld = $row['Number_held'];
-                    $itemsMap[$itemName] = $numberHeld;
-                }
+                $healqty = $row['Heal_quantity'];
+                $keyqty = $row['Key_quantity'];
+            }
 
-                  
-            }   
+            $conn->close();
         }
-    ?>
+        
+    }              
+    
+?>
     <script>
         function refreshTime() 
         {
@@ -194,7 +232,7 @@
                 $(function() {
                 var testSystem = new FileSystem();
                 $.ajax({
-                    url: '$map',
+                    url: 'map1.txt',
                     dataType: 'text',
                     success: function(data){
                         console.log(data);
@@ -206,7 +244,8 @@
                 const desktop = document.getElementById('desktop');
                 const game = new Desktop(desktop);
 
-                const terminal = new Terminal(desktop, 0, testSystem, $directory);
+                const terminal = new Terminal(desktop, 0, testSystem, '$directory');
+                //const terminal = new Terminal(desktop, 0, testSystem);
 
                 // set user stats and inventory
                 terminal.getUser.currentHp = $currentHealth;
@@ -214,7 +253,7 @@
                 terminal.getUser.str = $attack;
                 terminal.getUser.def = $defense;
                 terminal.getUser.eva = $evasion;
-                terminal.getUser.inventory = $itemsMap;
+                terminal.getUser().setItems($healqty,$keyqty);
 
                 game.registerWindow(terminal.getBaseWindow());
                 });
