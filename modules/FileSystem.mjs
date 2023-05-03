@@ -77,6 +77,7 @@ class TextFile
 {
     #metadata;
     #content;
+    #type;
     #locked;
 
     constructor(name, content, deletable = true, lock = false, date = Date.now())

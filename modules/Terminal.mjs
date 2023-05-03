@@ -318,7 +318,7 @@ class Terminal
             {
                 this.printLine("'" + args + "' is not deletable");
             }
-            else if (this.#fileSystem.getFileTree().getData([args]).isLocked())
+            else if (file.isLocked())
             {
                 if (this.#user.removeItem("key"))
                 {
