@@ -198,8 +198,8 @@ class FileFolder
         if(!this.#files.has(fileName))
             return false;
 
-        this.#metadata.incrementSize(-file.getSize());
-        this.#files.delete(file.getName());
+        this.#metadata.incrementSize(-this.getFile(fileName).getSize());
+        this.#files.delete(fileName);
         return true;
     }
 
@@ -360,7 +360,7 @@ class FileSystem
     {
         const nameList = filePath.split(FileSystem.slashes);
         const path = nameList.slice(0, -1);
-        return this.#fileTree.removeChild(nameList.at(-1), path);
+        return this.#fileTree.getData(path).removeFile(nameList.at(-1));
     }
 
     deleteFiles(filePaths)

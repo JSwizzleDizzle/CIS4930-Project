@@ -67,5 +67,3 @@ d,Temp,Windows
 f,explorer.exe,Windows Explorer,Windows
 f,system.ini,configuration settings,Windows
 f,win.ini,configuration settings,Windows
-d,test
-f,del.txt,something,test
