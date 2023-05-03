@@ -235,11 +235,6 @@ class FileSystem
         this.#fileTree = new NameTree(new FileFolder("root"), "root");
     }
 
-    getFileTree()
-    {
-        return this.#fileTree;
-    }
-
 
 
     // ================ HELPER FUNCTIONS ================ //

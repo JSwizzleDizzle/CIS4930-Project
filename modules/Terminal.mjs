@@ -472,7 +472,7 @@ class Terminal
         }
         else if(this.#fighting){
             let attack = this.#user.enemyAtt();
-            let message = this.#fileSystem.getFileTree().getNode().name + " swings at you!";
+            let message = this.#fileSystem.getDirectory().getName(); + " swings at you!";
                 this.printLine(message);
             if(attack){
                 message = "Hits you for " + this.#user.damage + " damage!";
@@ -495,8 +495,8 @@ class Terminal
 
     printCharacters(enemy) 
     {   
-        this.printLine("");
-        this.printLine("");
+        this.printLine();
+        this.printLine();
         let enemyStat = "                            ENEMY HP: " + this.#user.enemyChp + "/" + this.#user.enemyHp;
         this.printLine(enemyStat);
         this.printFile(enemy);
@@ -504,7 +504,7 @@ class Terminal
         let status = "HP: " + this.#user.currentHp + "/" + this.#user.hp;
             this.printLine("USER STATUS:");
             this.printLine(status);
-        this.printLine("")
+        this.printLine()
     }
 
     cmdAttack(args){
@@ -524,7 +524,7 @@ class Terminal
                 this.#baseWindow.setSize(new Vec2(976, 512));
                 this.#baseWindow.setPos(new Vec2(450, 320));
                 this.#fighting = false;
-                this.printLine("You defeated " + this.#fileSystem.getFileTree().getNode().name + "!");
+                this.printLine("You defeated " + this.#fileSystem.getDirectory().getName() + "!");
                 this.#user.exp();
                 this.printLine("EXP gained: " + this.#user.enemyStr);
                 this.awaitCommand();
@@ -572,7 +572,7 @@ class Terminal
             {
                 const cmd = itemized.shift();
                 const args = itemized.join(' ');
-
+                
                 Terminal.commands.has(cmd) ? this[Terminal.commands.get(cmd)](args) : this.#cmdError();
             }
         }
@@ -612,7 +612,7 @@ class Terminal
     
 
     // Printing methods
-    printLine(text = "")
+    printLine(text = " ")
     {
         this.#numLines++;
         this.#eCurrentLine = document.createElement("pre");

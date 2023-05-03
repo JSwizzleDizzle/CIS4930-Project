@@ -62,11 +62,6 @@ class NameTree
     }
 
     // Specific case of navigate: from nodePtr
-    getNode(path = [])  // DELETE
-    {
-        return this.#navigateFrom(this.#nodePtr, path);
-    }
-
     #getNode(path = [])
     {
         return this.#navigateFrom(this.#nodePtr, path);
