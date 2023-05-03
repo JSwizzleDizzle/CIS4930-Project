@@ -85,8 +85,6 @@ class TextFile
         this.#metadata = new FileMetadata(name, deletable, date);
         this.#metadata.setSize(content.length);
         this.#type = name.slice(name.lastIndexOf('.')).toLowerCase();
-
-        console.log(this.#metadata.toString());
     }
 
 
@@ -172,6 +170,7 @@ class FileFolder
 
 
     // ================ MUTATORS ================ //
+    // CREATION: Adds file(s) by a name and optional content/deletability, returns false if the file already exists
     addFile(fileName, content = "", overwrite = false)
     {
         if(this.#files.has(fileName) && !overwrite)
@@ -192,6 +191,8 @@ class FileFolder
         return success;
     }
 
+
+    // DELETION: Deletes file(s) by name, returns false if no such file exists
     removeFile(fileName)
     {
         if(!this.#files.has(fileName))
@@ -237,11 +238,9 @@ class FileSystem
 
 
 
-    // ================ HELPER FUNCTIONS ================ //
-
-
-
     // ================ ACCESSORS ================ //
+
+    // Gets a directory with a directory string
     getDirectory(pathString = "")
     {
         // Split by '/' or by '\'
@@ -249,6 +248,7 @@ class FileSystem
         return this.#fileTree.getData(pathList);
     }
 
+    // Gets a file with a directory string
     getFile(pathString = "")
     {
         // Split by '/' or by '\'
@@ -257,18 +257,11 @@ class FileSystem
         return dir ? dir.getFile(pathList.at(-1)) : null;
     }
 
-    getDirectoryNames()
-    {
-        return this.#fileTree.getChildrenNames();
-    }
+    // Get the directory or file names of the current directory
+    getDirectoryNames() { return this.#fileTree.getChildrenNames(); }
+    getFileNames() { return this.#fileTree.getData().getFileNames(); }
 
-    getFileNames()
-    {
-        return this.#fileTree.getData().getFileNames();
-    }
-
-    
-
+    // Gets current directory string
     getPathString()
     {
         // Remove "ROOT" and join with '\'
@@ -278,6 +271,7 @@ class FileSystem
 
 
     // ================ MUTATORS ================ //
+    // Traverses the file tree via directory strings
     setLocation(pathString)
     {
         return this.#fileTree.moveTo(pathString.split(FileSystem.slashes));
@@ -288,7 +282,7 @@ class FileSystem
         return this.#fileTree.moveToAbsolute(pathString.split(FileSystem.slashes));
     }
 
-
+    // Adds a directory to the tree via a path string, will add all the directories along the way if necessary
     addDirectory(dirName, deletable)
     {
         const nameList = dirName.split(FileSystem.slashes);
@@ -335,17 +329,15 @@ class FileSystem
         return success;
     }
 
+    // Adds a file to the current directory
     addFile(name, deletable = true, content = "", overwrite = false)
     {
         return this.#fileTree.getData().addFile(new TextFile(name, content, deletable), overwrite);
     }
 
-    addFiles(files)
-    {
 
-    }
-
-
+    // DELETION
+    // Deletes directories, a long path may be specified and the ending folder is the target
     deleteDirectory(dirName)
     {
         const nameList = dirName.split(FileSystem.slashes);
@@ -363,10 +355,12 @@ class FileSystem
         return success;
     }
 
+    // Same as directories but for files
     deleteFile(filePath)
     {
         const nameList = filePath.split(FileSystem.slashes);
-        return removeChild(nameList.at(-1), nameList.split(0, -1));
+        const path = nameList.slice(0, -1);
+        return this.#fileTree.removeChild(nameList.at(-1), path);
     }
 
     deleteFiles(filePaths)
@@ -379,7 +373,7 @@ class FileSystem
         return success;
     }
 
-    // Probably won't need this
+    // Probably won't need these
     /*
     moveDirectory(path)
     {
@@ -422,12 +416,17 @@ class FileSystem
     }
     */
 
+    // Generates a file tree from a text  file in the specified format
     loadFromFile(s)
     {
+        // Split by lines, then by commas
         const file = s.split(/\r?\n/);
         let line = file[0].split(',');
+
+        // Create the root
         const tree = new NameTree(new FileFolder(line[1]), line[1]);
 
+        // For each line, add the corresponding directory or text file
         for (let i = 1; i < file.length; i++)
         {
             line = file[i].split(',');
@@ -437,7 +436,7 @@ class FileSystem
             }
             else if (line[0] === 'f')
             {
-                tree.getDataAbsolute(line.slice(3)).addFile(line[1]);
+                tree.getDataAbsolute(line.slice(3)).addFile(line[1], line[2]);
             }
         }
         this.#fileTree = tree;

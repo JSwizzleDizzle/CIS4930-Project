@@ -94,7 +94,7 @@ class NameTree
 
     hasChild(path = [])
     {
-        return this.#navigateFrom(path) !== null;
+        return this.#getNode(path) !== null;
     }
 
     getChildrenNames()
@@ -161,8 +161,12 @@ class NameTree
     // REMOVAL: deletes child nodes
     removeChild(name, path = [])
     {
-        const parentNode = this.#getNode(path);
-        return parentNode !== null && parentNode.children.delete(name);
+        if(!this.hasChild(path))
+        {
+            return false;
+        }
+
+        return this.#getNode(path).children.delete(name);
     }
 
     removeChildAbsolute(name, path)
