@@ -560,6 +560,19 @@ class Terminal
             setTimeout(this.printCharacters(this.#sprite + ".txt"),5000);
 
             if(attack){
+                $.ajax({
+                    url: "./updates/CurrentHealth.php",
+                    type: "POST",
+                    data: {
+                           Current_health: this.currentHp,
+                          },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                });
                 message = "Hits you for " + this.#enemy.damage + " damage!";
                 this.printLine(message);
                 if(this.#user.currentHp <= 0){

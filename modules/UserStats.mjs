@@ -66,11 +66,37 @@ class Inventory
             if (type == "heal")
             {
                 this.inventory.items.set("heal", this.inventory.items.get("heal") + 1);
+                $.ajax({
+                    url: "./updates/HealQuantity.php",
+                    type: "POST",
+                    data: {
+                           Heal_quantity: this.inventory.items.get('heal')
+                        },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 return true;
             }
             else if (type == "key")
             {
                 this.inventory.items.set("key", this.inventory.items.get("key") + 1);
+                $.ajax({
+                    url: "./updates/KeyQuantity.php",
+                    type: "POST",
+                    data: {
+                           Heal_quantity: this.inventory.items.get('key')
+                        },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 return true;
             }
             else{
@@ -83,12 +109,38 @@ class Inventory
             if (type == "heal" && this.inventory.items.get("heal") > 0)
             {
                 this.inventory.items.set("heal", this.inventory.items.get("heal") - 1);
+                $.ajax({
+                    url: "./updates/HealQuantity.php",
+                    type: "POST",
+                    data: {
+                           Heal_quantity: this.inventory.items.get('heal')
+                        },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 return true;
             }
 
             else if (type == "key" && this.inventory.items.get("keys") > 0)
             {
                 this.inventory.items.set("key", this.inventory.items.get("keys") - 1);
+                                $.ajax({
+                    url: "./updates/KeyQuantity.php",
+                    type: "POST",
+                    data: {
+                           Heal_quantity: this.inventory.items.get('key')
+                        },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 return true;
             }
             else{
@@ -146,7 +198,23 @@ exp(target){
     this.hp += Math.round(target.str);
     this.def += target.str;
     this.str += Math.round(target.str);
-    this.eva += target.str;}
+    this.eva += target.str;
+    $.ajax({
+        url: "./updates/UserStats.php",
+        type: "POST",
+        data: {attack: this.att,
+               defense: this.def,
+               evasion: this.eva,
+               Max_health: this.hp,
+               },
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(xhr, status, error) {
+          console.log("Error: " + error);
+        }
+      });
+}   
     
 heal(){
     let healamt = this.hp / 5.0
@@ -156,6 +224,19 @@ heal(){
         let healamt = this.currentHp - this.hp;
         this.currentHp = this.hp;
     }
+    $.ajax({
+        url: "./updates/CurrentHealth.php",
+        type: "POST",
+        data: {
+               Current_health: this.currentHp,
+              },
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(xhr, status, error) {
+          console.log("Error: " + error);
+        }
+      });
     return healamt;
 }
 }

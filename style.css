@@ -49,7 +49,27 @@ main {
     color: blue;
 }
 
+/* login styles */
 
+	
+
+form {
+    color: white;
+}
+
+	
+
+#instructions {
+    background-image: url("images/instructions-background-image.png")
+}
+
+	
+
+.filler {
+
+    height:649px;
+    width:100%;
+} 
 
 /* ================ DESKTOP ================ */
 #desktop {
