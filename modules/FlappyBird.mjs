@@ -118,28 +118,6 @@ class FlappyBird
         
     }
 
-    static drawBackground(){
-
-        // clear the canvas
-        FlappyBird.drawRect(0, 0, 500, 600, "blue");
-
-        // citation : https://stackoverflow.com/questions/19541192/how-to-draw-cloud-shape-in-html5-canvas
-        drawCloud = (x, y) => {
-            FlappyBird.canvas.beginPath();
-            FlappyBird.canvas.arc(x, y, 60, Math.PI * 0.5, Math.PI * 1.5);
-            FlappyBird.canvas.arc(x + 70, y - 60, 70, Math.PI * 1, Math.PI * 1.85);
-            FlappyBird.canvas.arc(x + 152, y - 45, 50, Math.PI * 1.37, Math.PI * 1.91);
-            FlappyBird.canvas.arc(x + 200, y, 60, Math.PI * 1.5, Math.PI * 0.5);
-            FlappyBird.canvas.moveTo(x + 200, y + 60);
-            FlappyBird.canvas.lineTo(x, y + 60);
-            FlappyBird.canvas.strokeStyle = '#797874';
-            FlappyBird.canvas.stroke();
-            FlappyBird.canvas.fillStyle = '#8ED6FF';
-            FlappyBird.canvas.fill()
-        }
-
-        // for ()
-    }
     // for pipes
     static drawRect(x, y, w, h, color){
 

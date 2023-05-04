@@ -43,8 +43,6 @@ class Inventory
 
         //Others
         damage;
-        crit;
-
 
         constructor(username, health, strength, defense, evasion, heals = 0, keys = 0){
             this.uName = username;
@@ -66,11 +64,37 @@ class Inventory
             if (type == "heal")
             {
                 this.inventory.items.set("heal", this.inventory.items.get("heal") + 1);
+                $.ajax({
+                    url: "./updates/HealQuantity.php",
+                    type: "POST",
+                    data: {
+                           Heal_quantity: this.inventory.items.get('heal')
+                        },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 return true;
             }
             else if (type == "key")
             {
                 this.inventory.items.set("key", this.inventory.items.get("key") + 1);
+                $.ajax({
+                    url: "./updates/KeyQuantity.php",
+                    type: "POST",
+                    data: {
+                           Heal_quantity: this.inventory.items.get('key')
+                        },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 return true;
             }
             else{
@@ -83,17 +107,48 @@ class Inventory
             if (type == "heal" && this.inventory.items.get("heal") > 0)
             {
                 this.inventory.items.set("heal", this.inventory.items.get("heal") - 1);
+                $.ajax({
+                    url: "./updates/HealQuantity.php",
+                    type: "POST",
+                    data: {
+                           Heal_quantity: this.inventory.items.get('heal')
+                        },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 return true;
             }
 
             else if (type == "key" && this.inventory.items.get("keys") > 0)
             {
                 this.inventory.items.set("key", this.inventory.items.get("keys") - 1);
+                $.ajax({
+                    url: "./updates/KeyQuantity.php",
+                    type: "POST",
+                    data: {
+                           Heal_quantity: this.inventory.items.get('key')
+                        },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 return true;
             }
             else{
                 return false;
             }
+        }
+        setItems(healqty, keysqty)
+        {
+            this.inventory.items.set("heal", healqty);
+            this.inventory.items.set("keys", keysqty);
         }
     
     //<?php 
@@ -121,33 +176,73 @@ class Inventory
 //?>
 
 //Enemy stats
+grunt(){
+    this.enemyHp = Math.random() * this.hp;
+    this.enemyChp = this.enemyHp;
+    this.enemyStr = Math.random()* this.str;
+    this.enemyDef = Math.random()* this.def;
+    this.enemyEva = Math.random()* this.eva;
+}
+boss(){
+    this.enemyHp = Math.random()* this.hp + 4;
+    this.enemyChp = this.enemyHp;
+    this.enemyStr = Math.random()* this.str + 4;
+    this.enemyDef = Math.random()* this.def + 4;
+    this.enemyEva = Math.random()* this.eva + 4;
 
-att(target){
-    //Roll to attack!! If roll is higher than enemy evasion then attack successfully hits.
+}
+enemyAtt(){
     let attRoll = Math.random();
-this.crit = false;
-    if(attRoll >= target.eva){
-        let critRoll = Math.random();
-        //Make damage go to hundreths decimal places max
-        this.damage = 100 * (this.str - this.str*target.def);
-        this.damage = Math.round(this.damage)/100;
-        if(critRoll <= .1){
-            this.damage *= 2;
-            this.crit = true;
-        }
-        target.currentHp -= this.damage;
-        target.currentHp = Math.round(target.currentHp *100)/100;
+    if(attRoll >= this.eva){
+        this.damage = (this.enemyStr - this.enemyStr*this.def);
+        this.currentHp -= this.damage;
+        $.ajax({
+            url: "./updates/CurrentHealth.php",
+            type: "POST",
+            data: {
+                   Current_health: this.currentHp,
+                  },
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+              console.log("Error: " + error);
+            }
+          });
         return true;
     }
     return false;
 }
-
-exp(target){
-    this.hp += Math.round(target.str);
-    this.def += target.str;
-    this.str += Math.round(target.str);
-    this.eva += target.str;}
-    
+att(){
+    let attRoll = Math.random();
+    if(attRoll >= this.enemyEva){
+        this.damage = (this.str - this.str*this.enemyDef);
+        this.enemyChp -= this.damage;
+        return true;
+    }
+    return false;
+}
+exp(){
+    this.hp += this.enemyStr;
+    this.def += this.enemyStr;
+    this.str += this.enemyStr;
+    this.eva += this.enemyStr;
+    $.ajax({
+        url: "./updates/UserStats.php",
+        type: "POST",
+        data: {attack: this.att,
+               defense: this.def,
+               evasion: this.eva,
+               Max_health: this.hp,
+               },
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(xhr, status, error) {
+          console.log("Error: " + error);
+        }
+      });
+}
 heal(){
     let healamt = this.hp / 5.0
     this.currentHp += healamt;
@@ -156,6 +251,19 @@ heal(){
         let healamt = this.currentHp - this.hp;
         this.currentHp = this.hp;
     }
+    $.ajax({
+        url: "./updates/CurrentHealth.php",
+        type: "POST",
+        data: {
+               Current_health: this.currentHp,
+              },
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(xhr, status, error) {
+          console.log("Error: " + error);
+        }
+      });
     return healamt;
 }
 }
