@@ -538,7 +538,24 @@ class Terminal
                 message = "Hits you for " + this.#user.damage + " damage!";
                 this.printLine(message);
                 if(this.#user.currentHp <= 0){
-                    this.printLine("You've been defeated! Gameover!")
+                    this.printLine("You've been defeated! Gameover!");
+                    $.ajax({
+                        url: "./updates/UserStats.php",
+                        type: "POST",
+                        data: {attack: this.#user.att,
+                               defense: this.#user.def,
+                               evasion: this.#user.eva,
+                               Current_health: this.#user.currentHp,
+                               Max_health: this.#user.hp,
+                               Key_quantity: this.#user.inventory.items.get('keys'),
+                               Heal_quantity: this.#user.inventory.items.get('heal')},
+                        success: function(response) {
+                            console.log(response);
+                        },
+                        error: function(xhr, status, error) {
+                          console.log("Error: " + error);
+                        }
+                      });
                     this.#fighting = false;
                     this.#running = false;
                     this.cmdTerminalExe();
@@ -586,6 +603,23 @@ class Terminal
                 this.#fighting = false;
                 this.printLine("You defeated " + this.#fileSystem.getFileTree().getNode().name + "!");
                 this.#user.exp();
+                $.ajax({
+                    url: "./updates/UserStats.php",
+                    type: "POST",
+                    data: {attack: this.#user.att,
+                           defense: this.#user.def,
+                           evasion: this.#user.eva,
+                           Current_health: this.#user.currentHp,
+                           Max_health: this.#user.hp,
+                           Key_quantity: this.#user.inventory.items.get('keys'),
+                           Heal_quantity: this.#user.inventory.items.get('heal')},
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 this.printLine("EXP gained: " + this.#user.enemyStr);
                 this.awaitCommand();
                 return;
