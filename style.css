@@ -11,6 +11,11 @@ body {
     
 }
 
+canvas {
+    width: 100%;
+    height: 100%;
+}
+
 header.page-title {
     background-color: black;
     color: rgb(208,208,208);
@@ -31,6 +36,148 @@ main {
     height: 100%;
     
 }
+
+.red{
+    color: red;
+}
+
+.green{
+    color: lime;
+}
+
+.blue{
+    color: blue;
+}
+
+/* login styles */
+
+	
+
+form {
+    color: white;
+}
+
+	
+
+#instructions {
+    background-image: url("images/instructions-background-image.png")
+}
+
+	
+
+.filler {
+
+    height:649px;
+    width:100%;
+} 
+
+/* ================ DESKTOP ================ */
+#desktop {
+    width: min(100%, 16 / 9 * 100vh);
+    height: min(100%, 9 / 16 * 100vw);
+    margin: 0;
+    padding: 0;
+    border: 1px solid rgb(48,48,48);
+}
+
+#desktop > img {
+    width: 100%;
+    height: auto;
+}
+
+
+
+/* ================ BASE WINDOW ================ */
+.window {
+    border: 1px solid rgb(48,48,48);
+    box-shadow: 0px 0px 4px rgb(8,8,8);
+    position: absolute;
+    overflow-y: hidden;
+
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.bar {
+    color: white;
+    background-color: rgb(0,0,0);
+    width: 100%;
+    height: 28px;
+    display: flex;
+    flex-direction: row;
+}
+
+.window-title {
+    flex: 1;
+}
+
+.window-title img {
+    float: left;
+    margin: 10px 4px 0px 8px;
+}
+
+.window-title p {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 11px;
+    margin-top: 8px;
+}
+
+.window-button {
+    background-color: rgb(0,0,0);
+    text-align: center;
+    flex: 0 48px;
+}
+
+.window-button img {
+    margin-top: 10px;
+}
+
+.gray:hover {
+    background-color: rgb(32,32,32);
+}
+
+.red:hover {
+    background-color: rgb(232,17,35);
+}
+
+.default {
+    font-size: 14px;
+    background-color: rgb(255,255,255);
+    overflow-y: scroll;
+    height: calc(100% - 32px);
+}
+
+
+
+/* ================ TERMINAL ================ */
+.terminal-content {
+    font-size: 12px;
+    background-color: rgb(12,12,12);
+    height: calc(100% - 32px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.terminal .terminal-text {
+    min-height: 14px;
+    margin: 0px;
+    padding: 0;
+    color: rgb(208, 208, 208);
+}
+
+section.terminal-text pre {
+    margin: 0px;
+}
+
+.spacer {
+    width: 100%;
+    height: 466px;
+}
+
+
 #datetime {
     position: relative;
     bottom: -1040px;
@@ -78,93 +225,9 @@ main {
     height:34px;
 }
 
-#desktop {
-    width: 1920px;
-    height: 1080px;
-    margin: auto;
-    background-image: url("images/xp-desktop.jpeg");
-    border: 1px solid rgb(48,48,48);
-
-}
 
 
-.window {
-    border: 1px solid rgb(48,48,48);
-    box-shadow: 0px 0px 4px rgb(8,8,8);
-    position: absolute;
-}
 
-.bar {
-    color: white;
-    background-color: rgb(0,0,0);
-    width: 100%;
-    height: 32px;
-    display: flex;
-    flex-direction: row;
-}
-
-.window-title {
-    flex: 1;
-}
-
-.window-title img {
-    float: left;
-    margin: 10px 4px 0px 8px;
-}
-
-.window-title p {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 12px;
-    margin-top: 8px;
-}
-
-.window-button {
-    background-color: rgb(0,0,0);
-    text-align: center;
-    flex: 0 48px;
-}
-
-.window-button img {
-    margin-top: 10px;
-}
-
-.gray:hover {
-    background-color: rgb(32,32,32);
-}
-
-.red:hover {
-    background-color: rgb(232,17,35);
-}
-
-.default {
-    font-size: 14px;
-    background-color: rgb(255,255,255);
-    overflow-y: scroll;
-    height: calc(100% - 32px);
-}
-
-.terminal {
-    font-size: 14px;
-    background-color: rgb(12,12,12);
-    height: calc(100% - 32px);
-    overflow-y: scroll;
-}
-
-.terminal .terminal-text {
-    min-height: 14px;
-    margin: 0px;
-    padding: 0;
-    color: rgb(208, 208, 208);
-}
-
-section.terminal-text pre {
-    margin: 0px;
-}
-
-.spacer {
-    width: 100%;
-    height: 466px;
-}
 
 
 span:focus {

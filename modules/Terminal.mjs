@@ -50,9 +50,6 @@ class Terminal
 
     // Data
     #fileSystem;
-    #file1;
-    #file2;
-    #file3;
 
 
 
@@ -77,11 +74,10 @@ class Terminal
         ["att", "cmdAttack"],
         ["inv", "cmdInventory"],
         ["inventory", "cmdInventory"],
-        ["use", "cmdUseItem"],
-        ["reset", "cmdReset"]
+        ["use", "cmdUseItem"]
     ]);
 
-    constructor(parent, id, filesys = new FileSystem(), file2 = new FileSystem(), file3 = new FileSystem(), directory = `C:\\>`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
+    constructor(parent, id, filesys = new FileSystem(), directory = `C:\\>`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
     {
         this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
 
@@ -100,8 +96,6 @@ class Terminal
         this.#fighting = false;
         this.#user = new User("Guest",20,5,Math.random(),Math.random());
         this.#deletables = 36;
-        this.#file2 = file2;
-        this.#file3 = file3;
 
         this.#initialize();
     }
@@ -225,7 +219,24 @@ class Terminal
         }
         else if(this.#running){
             this.printLine();
-            this.#fileSystem.setLocation(args) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
+            if( this.#fileSystem.setLocation(args) ){
+                this.#directory = args;
+                $.ajax({
+                    url: "./updates/Directory.php",
+                    type: "POST",
+                    data: {arg: args},
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
+                }
+            else
+            {
+                this.printFile("resources/cmd-cd-error.txt");
+            }
             //Encounter chance
             this.#enCounter += (Math.random() * 5);
         }
@@ -325,8 +336,6 @@ class Terminal
         }
         else if(this.#running)
         {
-            
-
             this.printLine();
             const file = this.#fileSystem.getFile(args);
             if (!file)
@@ -365,6 +374,19 @@ class Terminal
 
                 this.#fileSystem.deleteFile(args);
                 this.printLine("'" + args + "' was successfully deleted");
+                $.ajax({
+                    url: "./updates/Map.php",
+                    type: "POST",
+                    data: {
+                           Map: this.#fileSystem.mapToText(), // this should call the maptotext
+                          },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 //Counting down files in map
                 this.#deletables --;
 
@@ -558,6 +580,19 @@ class Terminal
             setTimeout(this.printCharacters(this.#sprite + ".txt"),5000);
 
             if(attack){
+                $.ajax({
+                    url: "./updates/CurrentHealth.php",
+                    type: "POST",
+                    data: {
+                           Current_health: this.currentHp,
+                          },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 message = "Hits you for " + this.#enemy.damage + " damage!";
                 this.printLine(message);
                 if(this.#user.currentHp <= 0){
@@ -630,7 +665,7 @@ class Terminal
                 this.printLine("EXP gained: " + this.#enemy.str);
                 
                 if(this.#bossCounter >= 10){
-                    this.changePhase();
+                    // this.changePhase();
                     this.#bossCounter = 0;
                 }
                 else if(this.#enCounter >= 10){
@@ -672,7 +707,7 @@ class Terminal
         this.awaitCommand();
     }
 
-    changePhase(){
+    /* changePhase(){
         if(this.#bossName == "Windows Defender"){
             this.printFile("phase1.txt");
             this.#bossName = "Norton Antivirus";
@@ -694,15 +729,15 @@ class Terminal
             this.printLine('TYPE "reset" TO PLAY AGAIN');
 
         }
-    }
+    } */
     
-    cmdReset(){
+/*     cmdReset(){
         this.#running = false;
-        this.#fileSystem = this.#file1;
+        // this.#fileSystem = this.#file1;
         //Reset stats
         this.#user = new User("Guest",20,5,Math.random(),Math.random());            
         this.cmdTerminalExe();
-    }
+    } */
 
     ////////////////////////////////////////////////////////////////
     //  BEHAVIORS
