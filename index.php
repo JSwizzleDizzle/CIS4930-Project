@@ -233,13 +233,33 @@
                 import Login from './modules/Login.mjs';
 
                 $(function() {
-                var testSystem = new FileSystem();
+                var file1 = new FileSystem();
                 $.ajax({
                     url: 'map1.txt',
                     dataType: 'text',
                     success: function(data){
                         //console.log(data);
-                        testSystem.loadFromFile(data);
+                        file1.loadFromFile(data);
+                    }
+                });
+
+                var file2 = new FileSystem();
+                $.ajax({
+                    url: 'map2.txt',
+                    dataType: 'text',
+                    success: function(data){
+                        //console.log(data);
+                        file2.loadFromFile(data);
+                    }
+                });
+
+                var file3 = new FileSystem();
+                $.ajax({
+                    url: 'map3.txt',
+                    dataType: 'text',
+                    success: function(data){
+                        //console.log(data);
+                        file3.loadFromFile(data);
                     }
                 });
 
@@ -247,7 +267,7 @@
                 const desktop = document.getElementById('desktop');
                 const game = new Desktop(desktop);
 
-                const terminal = new Terminal(desktop, 0, testSystem, '$directory');
+                const terminal = new Terminal(desktop, 0, file1, file2, file3, '$directory');
                 // set user stats and inventory
                 terminal.getUser.currentHp = $currentHealth;
                 terminal.getUser.hp = $maxHealth;

@@ -208,7 +208,7 @@ class Terminal
         }
         else if(this.#running){
             this.printLine();
-            if( this.#fileSystem.getFileTree().moveTo([args]) ){
+            if( this.#fileSystem.setLocation(args) ){
                 this.#directory = args;
                 $.ajax({
                     url: "./updates/Directory.php",
@@ -323,16 +323,17 @@ class Terminal
         }
         else if(this.#running)
         {
+            var file = this.#fileSystem.getFile(args);
             this.printLine();
-            if (!this.#fileSystem.getFileTree().getData([args]))
+            if (!file)
             {
                 this.printLine("'" + args + "' does not exist");
             }
-            else if (!this.#fileSystem.getFileTree().getData([args]).isDeletable())
+            else if (!file.isDeletable())
             {
                 this.printLine("'" + args + "' is not deletable");
             }
-            else if (this.#fileSystem.getFileTree().getData([args]).isLocked())
+            else if (file.isLocked())
             {
                 if (this.#user.removeItem("key"))
                 {
@@ -346,7 +347,7 @@ class Terminal
             }
             else
             {
-                this.#fileSystem.getFileTree().removeChild(args);
+                this.#fileSystem.deleteFile(args);
                 this.printLine("'" + args + "' was successfully deleted");
                 $.ajax({
                     url: "./updates/Map.php",
@@ -386,9 +387,13 @@ class Terminal
     {
         if(this.#running){
         this.printLine();
-        for (let [key, value] of this.#fileSystem.getFileTree().getNode().children)
+        for (const name of this.#fileSystem.getDirectoryNames())
         {
-            this.printLine(value.name);
+            this.printLine(name);
+        }
+        for (const name of this.#fileSystem.getFileNames())
+        {
+            this.printLine(name);
         }
         this.printLine();
         }
