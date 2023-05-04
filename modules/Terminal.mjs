@@ -227,7 +227,23 @@ class Terminal
         }
         else if(this.#running){
             this.printLine();
-            this.#fileSystem.setLocation(args) ? this.#directory = args : this.printFile("resources/cmd-cd-error.txt");
+            if( this.#fileSystem.setLocation(args) ){
+                this.#directory = args;
+                $.ajax({
+                    url: "./updates/Directory.php",
+                    type: "POST",
+                    data: {arg: args},
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
+            }else{
+                this.printFile("resources/cmd-cd-error.txt");
+            }
+
             //Encounter chance
             this.#enCounter += (Math.random() * 5);
         }
@@ -367,6 +383,19 @@ class Terminal
 
                 this.#fileSystem.deleteFile(args);
                 this.printLine("'" + args + "' was successfully deleted");
+                $.ajax({
+                    url: "./updates/Map.php",
+                    type: "POST",
+                    data: {
+                           Map: this.#fileSystem.mapToText(), // this should call the maptotext
+                          },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 //Counting down files in map
                 this.#deletables --;
 
@@ -572,7 +601,7 @@ class Terminal
                     error: function(xhr, status, error) {
                       console.log("Error: " + error);
                     }
-                });
+                  });
                 message = "Hits you for " + this.#enemy.damage + " damage!";
                 this.printLine(message);
                 if(this.#user.currentHp <= 0){
