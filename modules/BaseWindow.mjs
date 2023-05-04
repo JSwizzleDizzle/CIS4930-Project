@@ -240,7 +240,6 @@ class BaseWindow
 
     addPos(position)
     {
-        console.log("add");
         this.#position.add(position);
         this.#eWindow.style.left = `${this.#position.x}px`;
         this.#eWindow.style.top = `${this.#position.y}px`;
@@ -283,7 +282,6 @@ class BaseWindow
     {
         this.#sizeRatio = ratio;
         this.setSize(this.#size);
-        console.log(this.#sizeRatio);
     }
 
 
@@ -322,9 +320,6 @@ class BaseWindow
             this.#eWindow.style.top = `${rect.y}px`;
             this.#eWindow.style.width = `${rect.width}px`;
             this.#eWindow.style.height = `${rect.height}px`;
-            console.log(this.#eWindow.style.width, this.#eWindow.style.height);
-            console.log(rect.width, rect.height);
-            console.log(rect);
         }
         else
         {
