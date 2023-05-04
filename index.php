@@ -180,12 +180,12 @@
 
     <main>
         <article id="desktop">  
-            
-            <div id="datetime">
+            <img src="images/xp-desktop.jpeg" alt="Windows XP Background" id="desktop-background" draggable="false">
+            <!-- <div id="datetime">
                 <div id="taskbar"></div>
                 <div id="time"></div>
                 <div id="date"></div>
-            </div>
+            </div> -->
         </article>
 
     </main>
@@ -218,61 +218,59 @@
     </script>
     <?php endif; ?>
         
-    <?php
-    // echo the new script based on the database parameters
-    if( $displayGame ){
+    <?php if( $displayGame ):?>
+    <script type='module'>
+        import Vec2 from './modules/Vec2.mjs';
+        import BaseWindow from './modules/BaseWindow.mjs';
+        import Terminal from './modules/Terminal.mjs';
+        import Desktop from './modules/Desktop.mjs';
+        import NameTree from './modules/NameTree.mjs';
+        import {FileSystem, FileData} from './modules/FileSystem.mjs';
+        import Pong from './modules/Pong.mjs';
+        import FlappyBird from './modules/FlappyBird.mjs';
+        import Login from './modules/Login.mjs';
 
-        echo "<script type='module'>
-                import Vec2 from './modules/Vec2.mjs';
-                import BaseWindow from './modules/BaseWindow.mjs';
-                import Terminal from './modules/Terminal.mjs';
-                import Desktop from './modules/Desktop.mjs';
-                import NameTree from './modules/NameTree.mjs';
-                import {FileSystem, FileData} from './modules/FileSystem.mjs';
-                import Pong from './modules/Pong.mjs';
-                import FlappyBird from './modules/FlappyBird.mjs';
-                import Login from './modules/Login.mjs';
+        $(function() {
+            var testSystem = new FileSystem();
+            $.ajax({
+                url: 'map1.txt',
+                dataType: 'text',
+                success: function(data){
+                    //console.log(data);
+                    testSystem.loadFromFile(data);
+                }
+            });
+            var map2 = new FileSystem();
+            $.ajax({
+                url: 'map2.txt',
+                dataType: 'text',
+                success: function(data){
+                    //console.log(data);
+                    map2.loadFromFile(data);
+                }
+            });
+            var map3 = new FileSystem();
+            $.ajax({
+                url: 'map3.txt',
+                dataType: 'text',
+                success: function(data){
+                    //console.log(data);
+                    map3.loadFromFile(data);
+                }
+            });
 
-                $(function() {
-                var testSystem = new FileSystem();
-                $.ajax({
-                    url: 'map1.txt',
-                    dataType: 'text',
-                    success: function(data){
-                        //console.log(data);
-                        testSystem.loadFromFile(data);
-                    }
-                var map2 = new FileSystem();
-                $.ajax({
-                    url: 'map2.txt',
-                    dataType: 'text',
-                    success: function(data){
-                        //console.log(data);
-                        map2.loadFromFile(data);
-                    }
-                var map3 = new FileSystem();
-                $.ajax({
-                    url: 'map3.txt',
-                    dataType: 'text',
-                    success: function(data){
-                        //console.log(data);
-                        map3.loadFromFile(data);
-                    }
-                });
+            // Webpage setup
+            const desktop = document.getElementById('desktop');
+            const game = new Desktop(desktop);
 
-                // Webpage setup
-                const desktop = document.getElementById('desktop');
-                const game = new Desktop(desktop);
+            const terminal = new Terminal(desktop, 0, testSystem, map2, map3, '$directory', '$currentHealth', '$maxHealth', '$attack', '$defense', '$evasion', '$phase');
+            // set inventory
+            terminal.getUser().setItems($healqty,$keyqty);
 
-                const terminal = new Terminal(desktop, 0, testSystem, map2, map3, '$directory', '$currentHealth', '$maxHealth', '$attack', '$defense', '$evasion', '$phase');
-                // set inventory
-                terminal.getUser().setItems($healqty,$keyqty);
-
-                game.registerWindow(terminal.getBaseWindow());
-                });
-            </script>";
-    }
-    ?>
+            game.registerWindow(terminal.getBaseWindow());
+        });
+    </script>
+    <?php endif; ?>
 
 </body>
 </html>
