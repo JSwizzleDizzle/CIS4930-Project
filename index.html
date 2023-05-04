@@ -78,23 +78,35 @@
         const testSystem = new FileSystem();
         testSystem.loadFromFile(ResourceManager.readFile("map1.txt"));
 
+        const fileText2 = ResourceManager.readFile("map2.txt");
+        const testSystem2 = new FileSystem();
+        testSystem2.loadFromFile(fileText2);
+
+        const fileText3 = ResourceManager.readFile("map3.txt");
+        const testSystem3 = new FileSystem();
+        testSystem3.loadFromFile(fileText3);
+
+        const fileText4 = ResourceManager.readFile("map1.txt");
+        const testSystem4 = new FileSystem();
+        testSystem4.loadFromFile(fileText4);
+
         
 
     
-    // Webpage setup
-        const eDesktop = document.getElementById("desktop");
-        eDesktop.g
-        const desktop = new Desktop(eDesktop);
+        // Webpage setup
+        const desktop = document.getElementById("desktop");
+        const game = new Desktop(desktop);
 
-        const terminal = new Terminal(eDesktop, 0, testSystem);
-        const testWindow = new BaseWindow(eDesktop, 3);
-        //const pong = new Pong(eDesktop, 1);
-        //const flappybird = new FlappyBird(eDesktop, 2);
+        const terminal = new Terminal(desktop, 0, testSystem, testSystem2, testSystem3, testSystem4);
+        const pong = new Pong(desktop, 1);
+        const flappybird = new FlappyBird(desktop, 2);
 
-        desktop.registerWindow(terminal.getBaseWindow());
-        desktop.registerWindow(testWindow);
-        //desktop.registerWindow(pong.getBaseWindow());
-        //desktop.registerWindow(flappybird.getBaseWindow());
+        game.registerWindow(terminal.getBaseWindow());
+        game.registerWindow(pong.getBaseWindow());
+        game.registerWindow(flappybird.getBaseWindow());
+
+
+
     });
     </script>
 </body>
