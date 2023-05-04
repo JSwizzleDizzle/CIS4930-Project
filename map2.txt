@@ -1,0 +1,69 @@
+d,C:
+d,Program Files
+d,Adobe,Program Files
+d,Acrobat DC,Program Files,Adobe
+d,Assets,Program Files,Adobe,Acrobat DC
+f,logo.png,adobe logo,Program Files,Adobe,Acrobat DC,Assets
+f,Acrobat.exe,acrobat,Program Files,Adobe,Acrobat DC
+f,pdfsettings.dll,acrobat pdf settings,Program Files,Adobe,Acrobat DC
+d,Blender Foundation,Program Files
+f,blender.exe,blender,Program Files,Blender Foundation
+f,readme.txt,About Blender 1.73: the Blender Foundation is proud to present Blender 1.73,Program Files,Blender Foundation
+f,copyright.txt,This version of Blender is subject to the GNU GPL license,Program Files,Blender Foundation
+d,Internet Explorer,Program Files
+d,images,Program Files,Internet Explorer
+f,bing.png,bing logo,Program Files,Internet Explorer,images
+f,iediagcmd.exe,diagonstics utility for internet explorer,Program Files,Internet Explorer
+f,iexplore.exe,internet explorer,Program Files,Internet Explorer
+d,Microsoft Office,Program Files
+d,root,Program Files,Microsoft Office
+d,Licenses,Program Files,Microsoft Office,root
+f,licensefiles_auto.xml,office license files,Program Files,Microsoft Office,root,Licenses
+d,Office,Program Files,Microsoft Office,root
+f,excel.exe,microsoft excel,Program Files,Microsoft Office,root,Office
+f,powerpnt.exe,microsoft powerpoint,Program Files,Microsoft Office,root,Office
+f,winword.exe,microsoft word,Program Files,Microsoft Office,root,Office
+d,Windows Defender,Program Files
+d,Offline,Program Files,Windows Defender
+f,OfflineScannerShell.exe,offline windows defender shell,Program Files,Windows Defender,Offline
+f,MsMpEng.exe,antimalware service executable,Program Files,Windows Defender
+f,NisSrv.exe,microsoft network realtime inspection service,Program Files,Windows Defender
+f,ThirdPartyNotices.txt,Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the Apache License Version 2.0,Program Files,Windows Defender
+d,WindowsPowerShell,Program Files
+d,Diagnostics,Program Files,WindowsPowerShell
+f,ComprehensiveTests.ps1,windows powershell validation,Program Files,WindowsPowerShell,Diagnostics
+d,PackageManagement,Program Files,WindowsPowerShell
+f,PackageManagement.ps1,windows powershell package manager,Program Files,WindowsPowerShell,PackageManagement
+f,PackageProviderFunctions.ps1,windows powershell package provider functions,Program Files,WindowsPowerShell,PackageManagement
+d,PowerShellGet,Program Files,WindowsPowerShell
+f,PowerShellGet.psd1,windows powershell data file,Program Files,WindowsPowerShell,PowerShellGet
+f,PSModule.psm1,windows powershell script module,Program Files,WindowsPowerShell,PowerShellGet
+d,PSReadline,Program Files,WindowsPowerShell
+f,PSReadline.psd1,windows powershell data file,Program Files,WindowsPowerShell,PSReadline
+f,PSReadline.psm1,windows powershell script module,Program Files,WindowsPowerShell,PSReadline
+d,Users
+d,Geist,Users
+d,Desktop,Users,Geist
+d,Documents,Users,Geist
+d,Pictures,Users,Geist,Documents
+lf,G_Weist_98.png,Old photo,Users,Geist,Documents,Pictures
+f,Shadow_the_Gengar.png,pokemon picture,Users,Geist,Documents,Pictures
+f,Vosnonet.png,Vosnonet picture,Users,Geist,Documents,Pictures
+f,Lucky_moves_in.mp4,lucky video,Users,Geist,Documents,Pictures
+f,Cave.png,cave picture,Users,Geist,Documents,Pictures
+d,Important,Users,Geist,Documents
+f,hs_diploma.pdf,high school diploma,Users,Geist,Documents,Important
+f,my_novel.pdf,novel,Users,Geist,Documents,Important
+d,Work Stuff,Users,Geist,Documents
+f,liability_form.pdf,liability form,Users,Geist,Documents,Work Stuff
+d,Downloads,Users,Geist
+f,tmnt.mp4,bootlegged film,Users,Geist,Downloads
+d,The Void,Users,Geist
+d,Empty,Users,Geist
+d,Windows
+d,System32,Windows
+d,Resources,Windows
+d,Temp,Windows
+f,explorer.exe,Windows Explorer,Windows
+f,system.ini,configuration settings,Windows
+f,win.ini,configuration settings,Windows

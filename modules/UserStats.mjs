@@ -121,30 +121,7 @@ class Inventory
 //?>
 
 //Enemy stats
-grunt(){
-    this.enemyHp = Math.random() * this.hp;
-    this.enemyChp = this.enemyHp;
-    this.enemyStr = Math.random()* this.str;
-    this.enemyDef = Math.random()* this.def;
-    this.enemyEva = Math.random()* this.eva;
-}
-boss(){
-    this.enemyHp = Math.random()* this.hp + 4;
-    this.enemyChp = this.enemyHp;
-    this.enemyStr = Math.random()* this.str + 4;
-    this.enemyDef = Math.random()* this.def + 4;
-    this.enemyEva = Math.random()* this.eva + 4;
 
-}
-enemyAtt(){
-    let attRoll = Math.random();
-    if(attRoll >= this.eva){
-        this.damage = (this.enemyStr - this.enemyStr*this.def);
-        this.currentHp -= this.damage;
-        return true;
-    }
-    return false;
-}
 att(target){
     //Roll to attack!! If roll is higher than enemy evasion then attack successfully hits.
     let attRoll = Math.random();

@@ -1,8 +1,0 @@
-d,C:
-d,Program Files
-d,Adobe,Program Files
-d,Acrobat DC,Program Files,Adobe
-d,Assets,Program Files,Adobe,Acrobat DC
-f,logo.png,adobe logo,Program Files,Adobe,Acrobat DC,Assets
-f,Acrobat.exe,acrobat,Program Files,Adobe,Acrobat DC
-f,pdfsettings.dll,acrobat pdf settings,Program Files,Adobe,Acrobat DC

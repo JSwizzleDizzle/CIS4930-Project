@@ -113,13 +113,17 @@
         const testSystem = new FileSystem();
         testSystem.loadFromFile(fileText);
 
-        const fileText2 = ResourceManager.readFile("test.txt");
+        const fileText2 = ResourceManager.readFile("map2.txt");
         const testSystem2 = new FileSystem();
         testSystem2.loadFromFile(fileText2);
 
-        const fileText3 = ResourceManager.readFile("test2.txt");
+        const fileText3 = ResourceManager.readFile("map3.txt");
         const testSystem3 = new FileSystem();
         testSystem3.loadFromFile(fileText3);
+
+        const fileText4 = ResourceManager.readFile("map1.txt");
+        const testSystem4 = new FileSystem();
+        testSystem4.loadFromFile(fileText4);
 
         
     
@@ -127,7 +131,7 @@
         const desktop = document.getElementById("desktop");
         const game = new Desktop(desktop);
 
-        const terminal = new Terminal(desktop, 0, testSystem, testSystem2, testSystem3);
+        const terminal = new Terminal(desktop, 0, testSystem, testSystem2, testSystem3, testSystem4);
         const pong = new Pong(desktop, 1);
         const flappybird = new FlappyBird(desktop, 2);
 
