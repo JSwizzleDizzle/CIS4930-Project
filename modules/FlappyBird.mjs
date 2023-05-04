@@ -75,7 +75,7 @@ class FlappyBird
 
         FlappyBird.canvas.setAttribute("id", "FlappyBird");
         FlappyBird.canvas.setAttribute("width", "500");
-        FlappyBird.canvas.setAttribute("height", "572");
+        FlappyBird.canvas.setAttribute("height", "600");
         FlappyBird.context = FlappyBird.canvas.getContext("2d");
         this.#eFlappyBird = this.#baseWindow.getWindowElements().eContent;
         this.#eFlappyBird.appendChild(FlappyBird.canvas);

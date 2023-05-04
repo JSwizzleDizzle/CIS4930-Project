@@ -73,11 +73,6 @@ class NameTree
         return this.#navigateFrom(this.#root, path);
     }
 
-    getRootNode()
-    {
-        return this.#root;
-    }
-
 
 
     ////////////////////////////////////////////////////////////////
@@ -104,13 +99,12 @@ class NameTree
 
     getChildrenNames()
     {
-        const keys = this.#nodePtr.children.keys();
-        const children = [];
-        for(const child of keys)
-        {
-            children.push(child);
-        }
-        return children;
+        return this.#nodePtr.children.keys();
+    }
+
+    getRootNode()
+    {
+        return this.#root;
     }
 
 

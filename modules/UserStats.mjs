@@ -1,13 +1,3 @@
-//This was originally a php file, but I was getting a "Failed to load module script: Expected a JavaScript module" error when importing User into terminal
-
-
-
-//#!/usr/local/bin/php
-
-//<html>
-
-//<script>
-
 class Inventory
 {
     profileName;
@@ -46,6 +36,12 @@ class Inventory
         crit;
 
 
+        setItems(healqty, keysqty)
+        {
+            this.inventory.items.set("heal", healqty);
+            this.inventory.items.set("keys", keysqty);
+        }
+        
         constructor(username, health, strength, defense, evasion, heals = 0, keys = 0){
             this.uName = username;
             this.hp = health;
@@ -96,30 +92,7 @@ class Inventory
             }
         }
     
-    //<?php 
-    // $conn = mysqli_connect("mysql.cise.ufl.edu", "username", "password", "database");
-	// // Check connection
-	// if ($conn->connect_error) {
-	//   die("Connection failed: " . $conn->connect_error);
-	// }
-//Sign up
-        //signUp(name, password){
-            //$sql = "INSERT INTO user_stats(username,password,hp,cHp,str,def,eva,loc) VALUES (?, ?, 20, 20, 10, 10, 10)";
-            //$stmt = mysqli_prepare($conn, $sql);
-            //mysqli_stmt_bind_param($stmt, "s", name, password);
-            //mysqli_stmt_execute($stmt);
-            
-            //close access to mysql
-            //mysqli_close($conn);
-        //}
-
-//Load in
-        // Load(name, password){
-
-        // }
-
-//?>
-
+ 
 //Enemy stats
 
 att(target){
@@ -158,9 +131,7 @@ heal(){
     }
     return healamt;
 }
+
 }
 
 export default User;
-//</script>
-
-//</html>

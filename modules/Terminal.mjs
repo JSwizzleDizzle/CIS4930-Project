@@ -1,4 +1,3 @@
-
 import Vec2 from "./Vec2.mjs";
 import ResourceManager from "./ResourceManager.mjs";
 import BaseWindow from "./BaseWindow.mjs";
@@ -82,7 +81,7 @@ class Terminal
         ["reset", "cmdReset"]
     ]);
 
-    constructor(parent, id, filesys = new FileSystem(), file2 = new FileSystem(), file3 = new FileSystem(), file4 = new FileSystem(), directory = `C:\\>`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
+    constructor(parent, id, filesys = new FileSystem(), file2 = new FileSystem(), file3 = new FileSystem(), directory = `C:\\>`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
     {
         this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
 
@@ -101,7 +100,6 @@ class Terminal
         this.#fighting = false;
         this.#user = new User("Guest",20,5,Math.random(),Math.random());
         this.#deletables = 36;
-        this.#file1 = file4;
         this.#file2 = file2;
         this.#file3 = file3;
 
@@ -680,13 +678,14 @@ class Terminal
             this.#bossName = "Norton Antivirus";
             this.#bossSprite = "images/ascii-images/enemies/norton";
             this.#fileSystem = this.#file2;
-            this.#deletables = 2;
+            this.#deletables = 36;
         }
         else if(this.#bossName == "Norton Antivirus"){
             this.printFile("phase2.txt");
             this.#bossName = "McAfee";
             this.#bossSprite = "images/ascii-images/enemies/mcAfee";
             this.#fileSystem = this.#file3;
+            this.#deletables = 36;
 
         }
         else{
@@ -833,6 +832,7 @@ class Terminal
     ////////////////////////////////////////////////////////////////
     getBaseWindow() { return this.#baseWindow; }
     getRunning() { return this.#running; }
+    getUser() { return this.#user; }
 
 
     ////////////////////////////////////////////////////////////////
