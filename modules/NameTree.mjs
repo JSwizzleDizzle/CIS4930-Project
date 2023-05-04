@@ -102,6 +102,11 @@ class NameTree
         return this.#nodePtr.children.keys();
     }
 
+    getRootNode()
+    {
+        return this.#root;
+    }
+
 
     // TRAVERSAL: Returns path to nodePtr as an array of name strings
     getCurrentPath()
