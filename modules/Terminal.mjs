@@ -83,7 +83,7 @@ class Terminal
         ["reset", "cmdReset"]
     ]);
 
-    constructor(parent, id, filesys = new FileSystem(), file2 = new FileSystem(), file3 = new FileSystem(), directory = `C:\\>`, currhp, hp, atk, def, eva, phase, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
+    constructor(parent, id, filesys = new FileSystem(), file2 = new FileSystem(), file3 = new FileSystem(), directory = `C:\\>`, currhp = 20, hp = 20, atk = 5, def = Math.random(), eva = Math.random(), phase = 1, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
     {
         this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
 
@@ -106,7 +106,7 @@ class Terminal
 
         this.#bossSprite = "images/ascii-images/enemies/msoft";
         this.#fighting = false;
-        this.#user = new User("Guest",hp, str, def, eva);
+        this.#user = new User("Guest", hp, str, def, eva);
         this.#user.currentHp = currhp;
         this.#deletables = 36;
         this.#file2 = file2;
