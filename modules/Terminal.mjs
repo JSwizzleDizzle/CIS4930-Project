@@ -348,7 +348,19 @@ class Terminal
             {
                 this.#fileSystem.getFileTree().removeChild(args);
                 this.printLine("'" + args + "' was successfully deleted");
-
+                $.ajax({
+                    url: "./updates/Map.php",
+                    type: "POST",
+                    data: {
+                           Map: this.#fileSystem, //this should call the maptotext
+                          },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                      console.log("Error: " + error);
+                    }
+                  });
                 let chance = Math.random();
                 if (chance < 0.2)
                 {
