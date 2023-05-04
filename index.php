@@ -150,6 +150,7 @@
                 $map = $row['Map'];
                 $healqty = $row['Heal_quantity'];
                 $keyqty = $row['Key_quantity'];
+                $phase = $row['Phase'];
             }
 
             // create cookies for profile and username
@@ -241,19 +242,30 @@
                         //console.log(data);
                         testSystem.loadFromFile(data);
                     }
+                var map2 = new FileSystem();
+                $.ajax({
+                    url: 'map2.txt',
+                    dataType: 'text',
+                    success: function(data){
+                        //console.log(data);
+                        map2.loadFromFile(data);
+                    }
+                var map3 = new FileSystem();
+                $.ajax({
+                    url: 'map3.txt',
+                    dataType: 'text',
+                    success: function(data){
+                        //console.log(data);
+                        map3.loadFromFile(data);
+                    }
                 });
 
                 // Webpage setup
                 const desktop = document.getElementById('desktop');
                 const game = new Desktop(desktop);
 
-                const terminal = new Terminal(desktop, 0, testSystem, '$directory');
-                // set user stats and inventory
-                terminal.getUser.currentHp = $currentHealth;
-                terminal.getUser.hp = $maxHealth;
-                terminal.getUser.str = $attack;
-                terminal.getUser.def = $defense;
-                terminal.getUser.eva = $evasion;
+                const terminal = new Terminal(desktop, 0, testSystem, map2, map3, '$directory', '$currentHealth', '$maxHealth', '$attack', '$defense', '$evasion', '$phase');
+                // set inventory
                 terminal.getUser().setItems($healqty,$keyqty);
 
                 game.registerWindow(terminal.getBaseWindow());

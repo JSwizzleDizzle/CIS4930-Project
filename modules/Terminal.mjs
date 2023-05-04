@@ -38,6 +38,7 @@ class Terminal
     #bossSprite;
     #deletables;
     #safe;
+    #phase;
 
 
     // HTML Elements
@@ -82,7 +83,7 @@ class Terminal
         ["reset", "cmdReset"]
     ]);
 
-    constructor(parent, id, filesys = new FileSystem(), file2 = new FileSystem(), file3 = new FileSystem(), file4 = new FileSystem(), directory = `C:\\>`, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
+    constructor(parent, id, filesys = new FileSystem(), file2 = new FileSystem(), file3 = new FileSystem(), directory = `C:\\>`, currhp, hp, atk, def, eva, phase, title = "C:\\Windows\\System32\\cmd.exe", icon = "terminal", position = new Vec2(450, 320), size = new Vec2(976, 512))
     {
         this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
 
@@ -96,14 +97,21 @@ class Terminal
         this.#fileSystem = filesys;
         this.#enCounter = 0;
         this.#bossCounter = 0;
-        this.#bossName = "Windows Defender"
+        if (phase == 1)
+            this.#bossName = "Windows Defender";
+        else if (phase == 2)
+            this.#bossName = "Norton Antivirus";
+        else
+            this.#bossName = "McAfee";
+
         this.#bossSprite = "images/ascii-images/enemies/msoft";
         this.#fighting = false;
-        this.#user = new User("Guest",20,5,Math.random(),Math.random());
+        this.#user = new User("Guest",hp, str, def, eva);
+        this.#user.currentHp = currhp;
         this.#deletables = 36;
-        this.#file1 = file4;
         this.#file2 = file2;
         this.#file3 = file3;
+        this.#phase = phase;
 
         this.#initialize();
     }
@@ -722,21 +730,22 @@ class Terminal
             this.#bossName = "Norton Antivirus";
             this.#bossSprite = "images/ascii-images/enemies/norton";
             this.#fileSystem = this.#file2;
-            this.#deletables = 2;
+            this.#phase++;
         }
         else if(this.#bossName == "Norton Antivirus"){
             this.printFile("phase2.txt");
             this.#bossName = "McAfee";
             this.#bossSprite = "images/ascii-images/enemies/mcAfee";
             this.#fileSystem = this.#file3;
-
+            this.#phase++;
         }
         else{
             this.printFile("phase3.txt");
             this.#running = false;
             this.printLine('TYPE "reset" TO PLAY AGAIN');
-
+            this.#phase = 1;
         }
+        this.#deletables = 36;
     }
     
     cmdReset(){
