@@ -78,7 +78,7 @@ class Pong
     }
 
 
-    constructor(parent, id, title = "pong", icon = "pong", position = new Vec2(50, 0), size = new Vec2(600, 400)){
+    constructor(parent, id, title = "pong", icon = "pong", position = new Vec2(50, 50), size = new Vec2(600, 400)){
 
         this.#baseWindow = new BaseWindow(parent, id, title, icon, position, size);
         Pong.gameState = Pong.GameStates.Start;

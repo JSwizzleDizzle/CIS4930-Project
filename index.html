@@ -24,7 +24,10 @@
     
 </head>
 <body id="body">
+    
+    <!--
     <script>
+        
         function refreshTime() 
         {
             const timeDisplay = document.getElementById("time");
@@ -39,26 +42,19 @@
         var time = new Date().getDate();
     
     </script>
-    <!-- <header class="page-title">
-        <section>
-            <h1>&gt; TERMINAL</h1>
-        </section>
-        <section>
-            <div class="page-login"></div>
-            <div class="page-signup"></div>
-        </section>
-        
+        <div id="datetime">
+                <div id="taskbar"></div>
+                <div id="time"></div>
+                <div id="date"></div>
+            </div>
         
     </header> -->
 
     <main>
         <article id="desktop">  
+            <img src="images/xp-desktop.jpeg" alt="Windows XP Background" id="desktop-background" draggable="false">
             
-            <div id="datetime">
-                <div id="taskbar"></div>
-                <div id="time"></div>
-                <div id="date"></div>
-            </div>
+            
         </article>
         
     </main>
@@ -77,41 +73,10 @@
         import FlappyBird from "./modules/FlappyBird.mjs";
         import ResourceManager from "./modules/ResourceManager.mjs"
 
-        // Tree testing
-        /*
-        const testTree = new NameTree(new FileData("C:"), "C:");
-        testTree.addChild("Program Files", new FileData("Program Files"));
-        testTree.addChild("Users", new FileData("Users"));
-        testTree.addChild("Windows", new FileData("Windows"));
-        testTree.addChild("defaultuser0", new FileData("defaultuser0"), ["Users"]);
-        testTree.addChild("Mike Oxmall", new FileData("Mike Oxmall"), ["Users"]);
-        testTree.moveTo(["Users"]);
-        testTree.addChild("Mike Oxbig", new FileData("Mike Oxbig"));
-        testTree.moveTo(["Mike Oxbig"]);
-        testTree.addChild("Photos", new FileData("Photos"));
-        testTree.addChildAbsolute("System32", new FileData("System32"), ["Windows"]);
-        testTree.printLevels();
-        testTree.moveTo(["Photos"]);
-        testTree.moveToAbsolute();
-        console.log(testTree.getCurrentPath().join('\\') + '>');
-        var testSystem = new FileSystem(testTree);
-
-        $.ajax({
-            url: "map1.txt",
-            dataType: "text",
-            success: function(data){
-                console.log(data);
-                testSystem.loadFromFile(data);
-            }
-        });
-        */
-
-
         $(function() {
 
-        const fileText = ResourceManager.readFile("map1.txt");
         const testSystem = new FileSystem();
-        testSystem.loadFromFile(fileText);
+        testSystem.loadFromFile(ResourceManager.readFile("map1.txt"));
 
         const fileText2 = ResourceManager.readFile("map2.txt");
         const testSystem2 = new FileSystem();
@@ -126,8 +91,9 @@
         testSystem4.loadFromFile(fileText4);
 
         
+
     
-    // Webpage setup
+        // Webpage setup
         const desktop = document.getElementById("desktop");
         const game = new Desktop(desktop);
 
@@ -138,6 +104,9 @@
         game.registerWindow(terminal.getBaseWindow());
         game.registerWindow(pong.getBaseWindow());
         game.registerWindow(flappybird.getBaseWindow());
+
+
+
     });
     </script>
 </body>

@@ -73,6 +73,11 @@ class NameTree
         return this.#navigateFrom(this.#root, path);
     }
 
+    getRootNode()
+    {
+        return this.#root;
+    }
+
 
 
     ////////////////////////////////////////////////////////////////
